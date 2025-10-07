@@ -76,7 +76,7 @@ exports.postAdminLogin = async (req, res) => {
     }
 };
 
-//Get admin Home
+// Get admin Home
 exports.getAdminHome = async (req, res) => {
     if (!req.session.admin) {
         return res.redirect("/admin");
@@ -87,9 +87,44 @@ exports.getAdminHome = async (req, res) => {
         const [adminData] = await db.execute("SELECT * FROM admins WHERE id = ?", [adminId]);
         const admin = adminData[0];
 
+        // Get events
         const [ongoingEvents] = await db.execute("SELECT * FROM events WHERE status = ?", ['ongoing']);
         const [expiredEvents] = await db.execute("SELECT * FROM events WHERE status = ?", ['expired']);
 
+        // Get dashboard statistics
+        // Total players count
+        const [totalPlayersResult] = await db.execute("SELECT COUNT(*) as total FROM team_players");
+        const totalPlayers = totalPlayersResult[0].total;
+
+        // Total coordinators count
+        const [totalCoordinatorsResult] = await db.execute("SELECT COUNT(*) as total FROM coach");
+        const totalCoordinators = totalCoordinatorsResult[0].total;
+
+        // Pending player requests
+        const [pendingPlayersResult] = await db.execute("SELECT COUNT(*) as total FROM team_players WHERE status = 'pending'");
+        const pendingPlayers = pendingPlayersResult[0].total;
+
+        // Pending coordinator requests
+        const [pendingCoordinatorsResult] = await db.execute("SELECT COUNT(*) as total FROM coach WHERE status = 'pending'");
+        const pendingCoordinators = pendingCoordinatorsResult[0].total;
+
+        // Confirmed players
+        const [confirmedPlayersResult] = await db.execute("SELECT COUNT(*) as total FROM team_players WHERE status = 'confirmed'");
+        const confirmedPlayers = confirmedPlayersResult[0].total;
+
+        // Confirmed coordinators
+        const [confirmedCoordinatorsResult] = await db.execute("SELECT COUNT(*) as total FROM coach WHERE status = 'confirmed'");
+        const confirmedCoordinators = confirmedCoordinatorsResult[0].total;
+
+        // Recent players (last 7 days)
+        const [recentPlayersResult] = await db.execute("SELECT COUNT(*) as total FROM team_players WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)");
+        const recentPlayers = recentPlayersResult[0].total;
+
+        // Recent coordinators (last 7 days)
+        const [recentCoordinatorsResult] = await db.execute("SELECT COUNT(*) as total FROM coach WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)");
+        const recentCoordinators = recentCoordinatorsResult[0].total;
+
+        // Get notifications
         const newCoachRequests = await getPendingCoachNotifications();
         const newTeamRequests = await getPendingTeamNotifications();
 
@@ -99,7 +134,17 @@ exports.getAdminHome = async (req, res) => {
             expiredEvents,
             success: res.locals.success || "",
             newCoachRequests,
-            newTeamRequests
+            newTeamRequests,
+            dashboardStats: {
+                totalPlayers,
+                totalCoordinators,
+                pendingPlayers,
+                pendingCoordinators,
+                confirmedPlayers,
+                confirmedCoordinators,
+                recentPlayers,
+                recentCoordinators
+            }
         });
     } catch (err) {
         console.error("Error loading admin home:", err);
@@ -109,7 +154,17 @@ exports.getAdminHome = async (req, res) => {
             expiredEvents: [],
             success: "",
             newCoachRequests: [],
-            newTeamRequests: []
+            newTeamRequests: [],
+            dashboardStats: {
+                totalPlayers: 0,
+                totalCoordinators: 0,
+                pendingPlayers: 0,
+                pendingCoordinators: 0,
+                confirmedPlayers: 0,
+                confirmedCoordinators: 0,
+                recentPlayers: 0,
+                recentCoordinators: 0
+            }
         });
     }
 };
@@ -1092,6 +1147,7 @@ exports.getAdminRegisteredTeam = async (req, res) => {
         });
     }
 };
+
 
 
 
