@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Home - SLAMS</title>
+    <link rel="stylesheet" href="/styles/adminHome.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap" rel="stylesheet">
     <style>
@@ -261,8 +262,8 @@
             border-left: 5px solid #f39c12;
         }
 
-        .stat-card.recent {
-            border-left: 5px solid #2ecc71;
+        .stat-card.teams {
+            border-left: 5px solid #9b59b6;
         }
 
         .stat-header {
@@ -295,8 +296,8 @@
             background: #f39c12;
         }
 
-        .recent .stat-icon {
-            background: #2ecc71;
+        .teams .stat-icon {
+            background: #9b59b6;
         }
 
         .stat-title {
@@ -960,7 +961,7 @@
                 </div>
                 <div class="stat-footer">
                     <span class="stat-change">
-                        <i class="fas fa-arrow-up"></i> <%= dashboardStats.confirmedPlayers %> confirmed
+                        <i class="fas fa-check-circle"></i> <%= dashboardStats.confirmedPlayers %> confirmed
                     </span>
                     <a href="/admin/users" class="stat-link">
                         View All <i class="fas fa-arrow-right"></i>
@@ -981,17 +982,20 @@
                 </div>
                 <div class="stat-footer">
                     <span class="stat-change">
-                        <i class="fas fa-arrow-up"></i> <%= dashboardStats.confirmedCoordinators %> confirmed
+                        <i class="fas fa-check-circle"></i> <%= dashboardStats.confirmedCoordinators %> confirmed
                     </span>
+                    <a href="/admin/coach" class="stat-link">
+                        View All <i class="fas fa-arrow-right"></i>
+                    </a>
                 </div>
             </div>
             
-            <!-- Pending Requests Card -->
+            <!-- Pending Team Requests Card -->
             <div class="stat-card pending">
                 <div class="stat-header">
                     <div>
                         <div class="stat-title">Pending Team Requests</div>
-                        <div class="stat-value"><%= dashboardStats.pendingPlayers + dashboardStats.pendingCoordinators %></div>
+                        <div class="stat-value"><%= dashboardStats.pendingTeamRequests %></div>
                     </div>
                     <div class="stat-icon">
                         <i class="fas fa-clock"></i>
@@ -999,7 +1003,7 @@
                 </div>
                 <div class="stat-footer">
                     <span class="stat-change">
-                        <%= dashboardStats.pendingPlayers %> players, <%= dashboardStats.pendingCoordinators %> coordinators
+                        <i class="fas fa-exclamation-circle"></i> Needs review
                     </span>
                     <a href="/admin/team-request" class="stat-link">
                         Review <i class="fas fa-arrow-right"></i>
@@ -1007,22 +1011,22 @@
                 </div>
             </div>
             
-            <!-- Recent Registrations Card -->
-            <div class="stat-card recent">
+            <!-- All Registered Teams Card -->
+            <div class="stat-card teams">
                 <div class="stat-header">
                     <div>
-                        <div class="stat-title">Recent Registrations (7 days)</div>
-                        <div class="stat-value"><%= dashboardStats.recentPlayers + dashboardStats.recentCoordinators %></div>
+                        <div class="stat-title">All Registered Teams</div>
+                        <div class="stat-value"><%= dashboardStats.allTeams %></div>
                     </div>
                     <div class="stat-icon">
-                        <i class="fas fa-chart-line"></i>
+                        <i class="fas fa-flag"></i>
                     </div>
                 </div>
                 <div class="stat-footer">
                     <span class="stat-change">
-                        <%= dashboardStats.recentPlayers %> players, <%= dashboardStats.recentCoordinators %> coordinators
+                        <i class="fas fa-check-circle"></i> <%= dashboardStats.confirmedTeams %> confirmed
                     </span>
-                    <a href="/admin/users" class="stat-link">
+                    <a href="/admin/registered-team" class="stat-link">
                         Details <i class="fas fa-arrow-right"></i>
                     </a>
                 </div>
