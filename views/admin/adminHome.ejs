@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="/styles/adminHome.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * {
             margin: 0;
@@ -213,6 +214,91 @@
             transition: padding-left 0.3s ease;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             min-height: 100vh;
+        }
+
+        /* Analytics Section */
+        .analytics-section {
+            background: #fff;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            margin-bottom: 40px;
+        }
+
+        .analytics-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .analytics-header h3 {
+            font-size: 24px;
+            color: #333;
+            margin: 0;
+        }
+
+        .analytics-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .time-filter {
+            display: flex;
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 4px;
+        }
+
+        .time-filter-btn {
+            padding: 8px 16px;
+            border: none;
+            background: transparent;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .time-filter-btn.active {
+            background: #8B0039;
+            color: white;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-bottom: 20px;
+        }
+
+        .analytics-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .analytics-stat {
+            text-align: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .analytics-stat .value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #8B0039;
+            margin-bottom: 5px;
+        }
+
+        .analytics-stat .label {
+            font-size: 14px;
+            color: #666;
         }
 
         /* Dashboard Stats Section */
@@ -736,6 +822,10 @@
                 gap: 20px;
             }
 
+            .chart-container {
+                height: 250px;
+            }
+
             /* Notification dropdown adjustments for tablet */
             #notificationDropdown {
                 width: 300px;
@@ -805,6 +895,20 @@
                 gap: 15px;
             }
 
+            .analytics-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .analytics-controls {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chart-container {
+                height: 200px;
+            }
+
             .modal-content {
                 width: 90%;
                 max-width: 300px;
@@ -852,6 +956,11 @@
                 padding: 10px 12px;
                 font-size: 13px;
                 width: 90px;
+            }
+
+            .time-filter-btn {
+                padding: 6px 12px;
+                font-size: 12px;
             }
         }
     </style>
@@ -945,6 +1054,42 @@
                 <%= success %>
             </div>
         <% } %>
+        
+        <!-- Registration Analytics Section -->
+        <section class="analytics-section">
+            <div class="analytics-header">
+                <h3>📊 Player Registration Analytics</h3>
+                <div class="analytics-controls">
+                    <div class="time-filter">
+                        <button class="time-filter-btn active" data-period="weekly">Last 7 Days</button>
+                        <button class="time-filter-btn" data-period="monthly">Last 30 Days</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="chart-container">
+                <canvas id="registrationChart"></canvas>
+            </div>
+            
+            <div class="analytics-stats">
+                <div class="analytics-stat">
+                    <div class="value" id="totalRegistrations">0</div>
+                    <div class="label">Total Registrations</div>
+                </div>
+                <div class="analytics-stat">
+                    <div class="value" id="averageDaily">0</div>
+                    <div class="label">Average Daily</div>
+                </div>
+                <div class="analytics-stat">
+                    <div class="value" id="peakDay">0</div>
+                    <div class="label">Peak Day</div>
+                </div>
+                <div class="analytics-stat">
+                    <div class="value" id="growthRate">0%</div>
+                    <div class="label">Growth Rate</div>
+                </div>
+            </div>
+        </section>
         
         <!-- Dashboard Statistics -->
         <section class="dashboard-stats">
@@ -1092,6 +1237,13 @@
     
     <script>
         let isSidebarOpen = false;
+        let registrationChart = null;
+
+        // Registration Analytics Data
+        const analyticsData = {
+            weekly: <%- JSON.stringify(registrationAnalytics.weekly) %>,
+            monthly: <%- JSON.stringify(registrationAnalytics.monthly) %>
+        };
 
         function toggleNav() {
             const sidebar = document.getElementById("mySidebar");
@@ -1197,6 +1349,123 @@
                 }
             });
         });
+
+        // Registration Analytics Chart
+        function initializeAnalyticsChart() {
+            const ctx = document.getElementById('registrationChart').getContext('2d');
+            
+            // Format date for display
+            function formatDate(dateString) {
+                const date = new Date(dateString);
+                return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            }
+
+            // Calculate statistics
+            function calculateStats(data) {
+                const counts = data.map(item => item.count);
+                const total = counts.reduce((sum, count) => sum + count, 0);
+                const average = total / data.length;
+                const peak = Math.max(...counts);
+                
+                // Calculate growth rate (comparing last period with previous period)
+                const halfLength = Math.floor(data.length / 2);
+                const firstHalf = data.slice(0, halfLength).reduce((sum, item) => sum + item.count, 0);
+                const secondHalf = data.slice(halfLength).reduce((sum, item) => sum + item.count, 0);
+                const growthRate = firstHalf > 0 ? ((secondHalf - firstHalf) / firstHalf * 100).toFixed(1) : 0;
+
+                return { total, average, peak, growthRate };
+            }
+
+            // Update statistics display
+            function updateStats(data) {
+                const stats = calculateStats(data);
+                document.getElementById('totalRegistrations').textContent = stats.total;
+                document.getElementById('averageDaily').textContent = stats.average.toFixed(1);
+                document.getElementById('peakDay').textContent = stats.peak;
+                document.getElementById('growthRate').textContent = stats.growthRate + '%';
+            }
+
+            // Create or update chart
+            function updateChart(period) {
+                const data = analyticsData[period];
+                const labels = data.map(item => formatDate(item.date));
+                const counts = data.map(item => item.count);
+
+                if (registrationChart) {
+                    registrationChart.destroy();
+                }
+
+                registrationChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Player Registrations',
+                            data: counts,
+                            backgroundColor: 'rgba(139, 0, 57, 0.7)',
+                            borderColor: 'rgba(139, 0, 57, 1)',
+                            borderWidth: 1,
+                            borderRadius: 4,
+                            borderSkipped: false,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                titleColor: '#fff',
+                                bodyColor: '#fff',
+                                borderColor: '#8B0039',
+                                borderWidth: 1
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    color: 'rgba(0, 0, 0, 0.1)'
+                                },
+                                ticks: {
+                                    stepSize: 1
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    display: false
+                                }
+                            }
+                        },
+                        animation: {
+                            duration: 1000,
+                            easing: 'easeInOutQuart'
+                        }
+                    }
+                });
+
+                updateStats(data);
+            }
+
+            // Time filter functionality
+            const timeFilterBtns = document.querySelectorAll('.time-filter-btn');
+            timeFilterBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    timeFilterBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    updateChart(this.dataset.period);
+                });
+            });
+
+            // Initialize with weekly data
+            updateChart('weekly');
+        }
+
+        // Initialize analytics chart when page loads
+        document.addEventListener('DOMContentLoaded', initializeAnalyticsChart);
     </script>
 </body>
 </html>
