@@ -108,6 +108,10 @@ exports.getAdminHome = async (req, res) => {
         const [pendingCoordinatorsResult] = await db.execute("SELECT COUNT(*) as total FROM coach WHERE status = 'pending'");
         const pendingCoordinators = pendingCoordinatorsResult[0].total;
 
+        // Pending team requests
+        const [pendingTeamRequestsResult] = await db.execute("SELECT COUNT(*) as total FROM team WHERE status = 'pending'");
+        const pendingTeamRequests = pendingTeamRequestsResult[0].total;
+
         // Confirmed players
         const [confirmedPlayersResult] = await db.execute("SELECT COUNT(*) as total FROM team_players WHERE status = 'confirmed'");
         const confirmedPlayers = confirmedPlayersResult[0].total;
@@ -116,13 +120,13 @@ exports.getAdminHome = async (req, res) => {
         const [confirmedCoordinatorsResult] = await db.execute("SELECT COUNT(*) as total FROM coach WHERE status = 'confirmed'");
         const confirmedCoordinators = confirmedCoordinatorsResult[0].total;
 
-        // Recent players (last 7 days)
-        const [recentPlayersResult] = await db.execute("SELECT COUNT(*) as total FROM team_players WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)");
-        const recentPlayers = recentPlayersResult[0].total;
+        // All registered teams
+        const [allTeamsResult] = await db.execute("SELECT COUNT(*) as total FROM team");
+        const allTeams = allTeamsResult[0].total;
 
-        // Recent coordinators (last 7 days)
-        const [recentCoordinatorsResult] = await db.execute("SELECT COUNT(*) as total FROM coach WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)");
-        const recentCoordinators = recentCoordinatorsResult[0].total;
+        // Confirmed teams
+        const [confirmedTeamsResult] = await db.execute("SELECT COUNT(*) as total FROM team WHERE status = 'confirmed'");
+        const confirmedTeams = confirmedTeamsResult[0].total;
 
         // Get notifications
         const newCoachRequests = await getPendingCoachNotifications();
@@ -140,10 +144,11 @@ exports.getAdminHome = async (req, res) => {
                 totalCoordinators,
                 pendingPlayers,
                 pendingCoordinators,
+                pendingTeamRequests,
                 confirmedPlayers,
                 confirmedCoordinators,
-                recentPlayers,
-                recentCoordinators
+                allTeams,
+                confirmedTeams
             }
         });
     } catch (err) {
@@ -160,10 +165,11 @@ exports.getAdminHome = async (req, res) => {
                 totalCoordinators: 0,
                 pendingPlayers: 0,
                 pendingCoordinators: 0,
+                pendingTeamRequests: 0,
                 confirmedPlayers: 0,
                 confirmedCoordinators: 0,
-                recentPlayers: 0,
-                recentCoordinators: 0
+                allTeams: 0,
+                confirmedTeams: 0
             }
         });
     }
@@ -1147,6 +1153,7 @@ exports.getAdminRegisteredTeam = async (req, res) => {
         });
     }
 };
+
 
 
 
