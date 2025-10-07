@@ -128,6 +128,89 @@ exports.getAdminHome = async (req, res) => {
         const [confirmedTeamsResult] = await db.execute("SELECT COUNT(*) as total FROM team WHERE status = 'confirmed'");
         const confirmedTeams = confirmedTeamsResult[0].total;
 
+        // Get registration analytics data
+        // Last 7 days registration data for team players
+        const [weeklyRegistrations] = await db.execute(`
+            SELECT 
+                DATE(created_at) as date,
+                COUNT(*) as count
+            FROM team_players 
+            WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+            GROUP BY DATE(created_at)
+            ORDER BY date
+        `);
+
+        // Last 30 days registration data for team players (for monthly view)
+        const [monthlyRegistrations] = await db.execute(`
+            SELECT 
+                DATE(created_at) as date,
+                COUNT(*) as count
+            FROM team_players 
+            WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
+            GROUP BY DATE(created_at)
+            ORDER BY date
+        `);
+
+        // Registration by sport type
+        const [sportRegistrations] = await db.execute(`
+            SELECT 
+                sports,
+                COUNT(*) as count
+            FROM team_players 
+            WHERE sports IS NOT NULL AND sports != ''
+            GROUP BY sports
+            ORDER BY count DESC
+            LIMIT 10
+        `);
+
+        // Registration trends by organization type
+        const [organizationRegistrations] = await db.execute(`
+            SELECT 
+                t.organization,
+                COUNT(tp.id) as count
+            FROM team_players tp
+            JOIN team t ON tp.team_id = t.id
+            WHERE t.organization IS NOT NULL
+            GROUP BY t.organization
+            ORDER BY count DESC
+        `);
+
+        // Format the registration data for charts
+        const last7Days = [];
+        const last30Days = [];
+        
+        // Generate last 7 days dates
+        for (let i = 6; i >= 0; i--) {
+            const date = new Date();
+            date.setDate(date.getDate() - i);
+            last7Days.push(date.toISOString().split('T')[0]);
+        }
+
+        // Generate last 30 days dates (last 4 weeks)
+        for (let i = 29; i >= 0; i--) {
+            const date = new Date();
+            date.setDate(date.getDate() - i);
+            last30Days.push(date.toISOString().split('T')[0]);
+        }
+
+        // Map weekly data
+        const weeklyData = last7Days.map(date => {
+            const found = weeklyRegistrations.find(reg => reg.date.toISOString().split('T')[0] === date);
+            return {
+                date: date,
+                count: found ? found.count : 0
+            };
+        });
+
+        // Map monthly data
+        const monthlyData = last30Days.map(date => {
+            const found = monthlyRegistrations.find(reg => reg.date.toISOString().split('T')[0] === date);
+            return {
+                date: date,
+                count: found ? found.count : 0
+            };
+        });
+
         // Get notifications
         const newCoachRequests = await getPendingCoachNotifications();
         const newTeamRequests = await getPendingTeamNotifications();
@@ -149,6 +232,12 @@ exports.getAdminHome = async (req, res) => {
                 confirmedCoordinators,
                 allTeams,
                 confirmedTeams
+            },
+            registrationAnalytics: {
+                weekly: weeklyData,
+                monthly: monthlyData,
+                bySport: sportRegistrations,
+                byOrganization: organizationRegistrations
             }
         });
     } catch (err) {
@@ -170,6 +259,12 @@ exports.getAdminHome = async (req, res) => {
                 confirmedCoordinators: 0,
                 allTeams: 0,
                 confirmedTeams: 0
+            },
+            registrationAnalytics: {
+                weekly: [],
+                monthly: [],
+                bySport: [],
+                byOrganization: []
             }
         });
     }
@@ -1153,6 +1248,7 @@ exports.getAdminRegisteredTeam = async (req, res) => {
         });
     }
 };
+
 
 
 
