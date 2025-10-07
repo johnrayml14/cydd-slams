@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= team.teamName %> - <%= sport %> Players</title>
+<link rel="stylesheet" href="/styles/sportPlayers.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <main class="dashboard-container">
+        <div class="players-container">
+            <div class="players-header">
+                <div class="team-logo">
+                    <% if (team.teamProfile) { %>
+                        <img src="<%= team.teamProfile %>" alt="<%= team.teamName %>">
+                    <% } else { %>
+                        <i class="fas fa-users"></i>
+                    <% } %>
+                </div>
+                <div class="header-info">
+                    <h1><%= team.teamName %></h1>
+                    <span class="sport-title">
+                        <i class="fas fa-running"></i> <%= sport %> Players
+                    </span>
+                </div>
+            </div>
+
+            <div class="players-list">
+                <h2 class="section-title">
+                    <i class="fas fa-users"></i> Player Roster
+                </h2>
+
+                <% if (players.length > 0) { %>
+                    <% players.forEach(player => { %>
+                        <div class="player-card" onclick="showPlayerModal(<%= JSON.stringify(player) %>, '<%= team.organization %>')">
+                            <div class="player-avatar">
+                                <% if (player.user_profile) { %>
+                                    <img src="<%= player.user_profile %>" alt="<%= player.player_name %>" style="border: 2px solid <%= team.organization === 'school' ? '#4A154B' : '#9C4D9A' %>;">
+                                <% } else { %>
+                                    <i class="fas fa-user"></i>
+                                <% } %>
+                            </div>
+                            <div class="player-details">
+                                <h3><%= player.player_name %></h3>
+                            </div>
+                        </div>
+                    <% }); %>
+                <% } else { %>
+                    <div class="no-players">
+                        <p>No players found for <%= sport %> in this team.</p>
+                    </div>
+                <% } %>
+            </div>
+
+            <div class="action-buttons">
+                <a href="/teams/<%= team.id %>" class="btn btn-back">
+                    <i class="fas fa-arrow-left"></i> Back
+                </a>
+                <a href="/all-teams" class="btn btn-primary">
+                    <i class="fas fa-list"></i> All Teams
+                </a>
+            </div>
+        </div>
+
+        <!-- Player Modal -->
+        <div class="modal" id="playerModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="modalPlayerName"></h2>
+                    <span class="close-modal" onclick="closeModal()">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-avatar">
+                        <img id="modalPlayerAvatar" src="" alt="Player Avatar" style="border: 2px solid <%= team.organization === 'school' ? '#4A154B' : '#9C4D9A' %>;">
+                        <i class="fas fa-user" id="modalPlayerIcon"></i>
+                    </div>
+                    <div class="player-info-grid" id="playerInfoGrid">
+                        <!-- Dynamic content will be inserted here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Show player modal with details
+        function showPlayerModal(player, organization) {
+            const modal = document.getElementById('playerModal');
+            const modalPlayerName = document.getElementById('modalPlayerName');
+            const modalPlayerAvatar = document.getElementById('modalPlayerAvatar');
+            const modalPlayerIcon = document.getElementById('modalPlayerIcon');
+            const playerInfoGrid = document.getElementById('playerInfoGrid');
+
+            // Set player name
+            modalPlayerName.textContent = player.player_name;
+
+            // Set player avatar
+            if (player.user_profile) {
+                modalPlayerAvatar.src = `${player.user_profile}`;
+                modalPlayerAvatar.style.display = 'block';
+                modalPlayerIcon.style.display = 'none';
+            } else {
+                modalPlayerAvatar.style.display = 'none';
+                modalPlayerIcon.style.display = 'block';
+            }
+
+            // Clear previous content
+            playerInfoGrid.innerHTML = '';
+
+            // Add player info based on organization
+            const infoItems = [
+                { label: 'Gender', value: player.sex || 'Not specified', icon: 'venus-mars' },
+                { label: 'Age', value: player.age || 'N/A', icon: 'birthday-cake' },
+                { label: 'Contact', value: player.contact_number || 'Not provided', icon: 'phone' }
+            ];
+
+            // Add organization-specific fields
+            if (organization === 'school') {
+                infoItems.push(
+                    { label: 'School', value: player.school || 'Not specified', icon: 'school' },
+                    { label: 'Year Level', value: player.year_level || 'Not specified', icon: 'graduation-cap' }
+                );
+            } else if (organization === 'barangay') {
+                infoItems.push(
+                    { label: 'Barangay', value: player.barangay || 'Not specified', icon: 'map-marker-alt' }
+                );
+            }
+
+            // Add sports if available
+            if (player.sports) {
+                infoItems.push(
+                    { label: 'Sports', value: player.sports, icon: 'running' }
+                );
+            }
+
+            // Create and append info items
+            infoItems.forEach(item => {
+                const infoItem = document.createElement('div');
+                infoItem.className = 'info-item';
+                infoItem.innerHTML = `
+                    <div class="info-label">
+                        <i class="fas fa-${item.icon}"></i> ${item.label}
+                    </div>
+                    <div class="info-value">${item.value}</div>
+                `;
+                playerInfoGrid.appendChild(infoItem);
+            });
+
+            // Show modal
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Close modal
+        function closeModal() {
+            const modal = document.getElementById('playerModal');
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('playerModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+
+</html>

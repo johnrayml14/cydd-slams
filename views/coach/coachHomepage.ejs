@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coordinator Home - SLAMS</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Orbitron:wght@500&display=swap">
+    <link rel="stylesheet" href="/styles/frontpage.css">
+    <link rel="stylesheet" href="/styles/coachHomepage.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+   
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar Menu -->
+    <div id="mySidebar" class="sidebar">
+        <a href="/coach/homepage" class="active"><i class="fas fa-home"></i> Home</a>
+        <a href="/coach/posts" ><i class="fas fa-newspaper"></i> Posts</a>
+        <a href="/coach/gallery"><i class="fas fa-image"></i> Gallery</a>
+        <a href="/coach/events"><i class="fas fa-calendar-alt"></i> Events</a>
+        <!-- Team link with sub-sidebar -->
+        <a href="javascript:void(0);" class="team-link" onclick="toggleSubSidebar()"><i class="fas fa-users-cog"></i> Team</a>
+        <div class="sub-sidebar" id="subSidebar">
+            <a href="/coach/my-team"><i class="fas fa-users"></i> My Team</a>
+            <a href="/coach/all-teams"><i class="fas fa-landmark"></i> All Teams</a>
+        </div>
+    </div>
+
+    <!-- Sidebar toggle button -->
+    <span class="sidebar-btn" onclick="toggleNav()">&#9776;</span>
+
+    <header class="header">
+        <div class="logo">
+            <a href="/coach/homepage" style="text-decoration: none;">
+                <img src="/images/cityYouth.jpg" alt="SLAMS Logo">
+            </a>
+            <span class="slams-title">SLAMS</span>
+        </div>
+        
+        <div class="menu-bar" style="display: flex; align-items: center; gap: 20px;">
+            <!-- Notification Bell -->
+            <div style="position: relative;">
+                <a href="javascript:void(0);" onclick="toggleNotificationForm()" style="color: white; position: relative;">
+                    <i class="fas fa-bell" style="font-size: 22px;"></i>
+                    <% if (notifications && notifications.length > 0) { %>
+                        <span style="position: absolute; top: -4px; right: -6px; width: 8px; height: 8px; background-color: red; border-radius: 50%; display: inline-block;"></span>
+                    <% } %>
+                </a>
+
+                <!-- Notification Dropdown -->
+                
+            </div>
+            <!-- Coach Profile -->
+            <div class="user-profile">
+                <% if (coach && coach.coachProfile) { %>
+                    <img src="<%= coach.coachProfile %>" alt="Profile" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #fff;">
+                <% } else { %>
+                    <i class="fas fa-user-shield"></i>
+                <% } %>
+                
+            </div>
+        </div>
+
+    </header>
+    <div id="notificationDropdown" style="display: none; position: fixed; right: 20px; top: 70px; background: #621616; width: 320px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); z-index: 2001; overflow: hidden; border: 1px solid #ffcc00; border-radius: 0;">
+        <div style="padding: 15px;">
+            <h4 style="margin: 0 0 10px 0; font-size: 16px; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 8px; color: #fff;">Notifications</h4>
+
+            <% if (notifications && notifications.length > 0) { %>
+                <% notifications.forEach(n => { %>
+                    <p style="font-size: 14px; color: #fff; margin: 10px 0;">
+                        🔔 <a href="<%= n.link %>" style="color: #ffcc00; text-decoration: none;"><%= n.message %></a>
+                    </p>
+                <% }); %>
+            <% } else { %>
+                <p style="font-size: 14px; color: rgba(255,255,255,0.7); margin: 10px 0;">No new notifications.</p>
+            <% } %>
+        </div>
+    </div>
+    <div class="dropdown-content">
+                    <a href="/coach/profile">
+                        <i class="fas fa-cogs" style="margin-right: 8px;"></i> Profile
+                    </a>
+                    <a href="javascript:void(0);" class="logout-btn" onclick="showLogoutModal()">
+                        <i class="fas fa-sign-out-alt" style="margin-right: 8px;"></i> Log Out
+                    </a>
+                </div>
+
+    <div class="hero-text">
+        <h1>Unleash Your Potential!</h1>
+<p>Train hard. Play harder. Be the champion!</p>
+<a href="/coach/events" class="event-button">Explore Events</a>
+    </div>
+
+    <!-- Modal for logout confirmation -->
+    <div id="logoutModal" class="modal">
+        <div class="modal-content">
+            <h3>Are you sure you want to log out?</h3>
+            <button id="confirmLogout" class="confirm-btn">Confirm</button>
+            <button id="cancelLogout" class="cancel-btn">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Sidebar toggle
+        let isSidebarOpen = false;
+        const sidebar = document.getElementById("mySidebar");
+        const sidebarBtn = document.querySelector(".sidebar-btn");
+
+        function toggleNav() {
+            if (isSidebarOpen) {
+                sidebar.style.left = "-240px";
+                sidebarBtn.innerHTML = "&#9776;";
+            } else {
+                sidebar.style.left = "0";
+                sidebarBtn.innerHTML = "&times;";
+            }
+            isSidebarOpen = !isSidebarOpen;
+        }
+        window.toggleNav = toggleNav;
+
+        // Sub-sidebar toggle
+        const subSidebar = document.getElementById("subSidebar");
+        const teamLink = document.querySelector(".team-link");
+        teamLink.addEventListener("click", function () {
+            if (subSidebar.style.display === "block") {
+                subSidebar.style.display = "none";
+                teamLink.classList.remove("active");
+            } else {
+                subSidebar.style.display = "block";
+                teamLink.classList.add("active");
+            }
+        });
+
+        // Logout modal
+        const logoutModal = document.getElementById('logoutModal');
+        const confirmLogout = document.getElementById('confirmLogout');
+        const cancelLogout = document.getElementById('cancelLogout');
+
+        function showLogoutModal() {
+            logoutModal.style.display = 'block';
+        }
+        window.showLogoutModal = showLogoutModal;
+
+        function hideLogoutModal() {
+            logoutModal.style.display = 'none';
+        }
+
+        confirmLogout.addEventListener('click', function () {
+            window.location.href = '/coach/logout';
+        });
+
+        cancelLogout.addEventListener('click', function () {
+            hideLogoutModal();
+        });
+
+        // Coach profile dropdown
+        const userProfile = document.querySelector('.user-profile');
+        const dropdown = document.querySelector('.dropdown-content');
+        let hideTimeout;
+
+        userProfile.addEventListener('click', function(e) {
+            e.stopPropagation();
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        });
+
+        // Notification toggle
+        const notificationDropdown = document.getElementById('notificationDropdown');
+        const bellIcon = document.querySelector('.fa-bell');
+
+        function toggleNotificationForm() {
+            notificationDropdown.style.display = notificationDropdown.style.display === 'block' ? 'none' : 'block';
+        }
+        window.toggleNotificationForm = toggleNotificationForm;
+
+        window.addEventListener('click', function (event) {
+            if (notificationDropdown && !notificationDropdown.contains(event.target) && !bellIcon.contains(event.target)) {
+                notificationDropdown.style.display = 'none';
+            }
+        });
+
+        // Handle notification viewed and redirect
+        window.handleNotificationClick = function (link, coachId) {
+            fetch('/coach/notification/viewed', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ coachId })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    const dot = document.querySelector('.fa-bell + span');
+                    if (dot) dot.style.display = 'none';
+
+                    const notifItems = document.querySelectorAll('.notif-item');
+                    notifItems.forEach(item => {
+                        item.style.backgroundColor = 'transparent';
+                        item.style.cursor = 'default';
+                        item.onclick = null;
+                    });
+
+                    if (link) {
+                        window.location.href = link;
+                    }
+                }
+            })
+            .catch(err => console.error('Notification mark error:', err));
+        };
+    });
+</script>
+
+</body>
+</html>

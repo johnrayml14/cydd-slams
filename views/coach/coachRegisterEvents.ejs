@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coordinator Register Team - SLAMS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #880c0c; /* Facebook blue */
+            --secondary-color: #f0f2f5; /* Facebook light gray */
+            --white: #ffffff;
+            --text-dark: #1c1e21;
+            --text-light: #65676b;
+            --border-radius: 8px;
+            --box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--secondary-color);
+            color: var(--text-dark);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+
+        .form-header {
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 15px 20px;
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .form-header h2 {
+            margin: 0;
+            font-size: 20px;
+        }
+
+        .back-button {
+            background-color: var(--white);
+            color: var(--primary-color);
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .back-button:hover {
+            background-color: #e7f3ff;
+        }
+
+        .back-button i {
+            margin-right: 8px;
+        }
+
+        .register-form-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: var(--white);
+            box-shadow: var(--box-shadow);
+            border-radius: var(--border-radius);
+        }
+
+        .form-content {
+            padding: 0 30px 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #dddfe2;
+            border-radius: var(--border-radius);
+            font-size: 15px;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 2px #e7f3ff;
+        }
+
+        .form-group input[type="file"] {
+            padding: 8px;
+            background-color: var(--secondary-color);
+        }
+
+        .submit-btn {
+            background-color: var(--primary-color);
+            color: var(--white);
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            width: 100%;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .submit-btn:hover {
+            background-color: #166fe5;
+        }
+
+        .error-message {
+            color: #ff4d4f;
+            background-color: #fff2f0;
+            padding: 12px;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            border: 1px solid #ffccc7;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .success-message {
+            color: #52c41a;
+            background-color: #f6ffed;
+            padding: 12px;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            border: 1px solid #b7eb8f;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .file-hint {
+            font-size: 13px;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+
+        @media (max-width: 768px) {
+            .form-content {
+                padding: 0 20px 20px;
+            }
+            
+            .dashboard-container {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="dashboard-container">
+        <!-- Team Registration Form -->
+        <div class="register-form-container">
+            <div class="form-header">
+                <h2>Register Your Organization</h2>
+                <a href="/coach/events/<%= event.id %>" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Events
+                </a>
+            </div>
+
+            <div class="form-content">
+                <!-- Display error message if any -->
+                <% if (errorMessage && errorMessage.length > 0) { %>
+                    <div class="error-message">
+                        <p><i class="fas fa-exclamation-circle"></i> <%= errorMessage %></p>
+                    </div>
+                <% } %>
+                
+                <% if (successMessage && successMessage.length > 0) { %>
+                    <div class="success-message">
+                        <p><i class="fas fa-check-circle"></i> <%= successMessage %></p>
+                    </div>
+                <% } %>        
+
+                <form action="/coach/register/<%= event.id %>" method="POST" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="teamName">Organization Name</label>
+                        <input type="text" id="teamName" name="teamName" placeholder="Enter your organization name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="position">Your Position</label>
+                        <input type="text" id="position" name="position" placeholder="e.g., Head Coach, Sports Coordinator" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="organization">Organization Type</label>
+                        <select id="organization" name="organization" required>
+                            <option value="">Select Organization Type</option>
+                            <option value="school">School</option>
+                            <option value="barangay">Barangay</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="appointment_form">Appointment Form</label>
+                        <input type="file" id="appointment_form" name="appointment_form" accept=".pdf" required>
+                        <p class="file-hint">Upload your official appointment document (PDF only, max 10MB)</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="teamProfile">Team Logo</label>
+                        <input type="file" id="teamProfile" name="teamProfile" accept="image/*" required>
+                        <p class="file-hint">Upload your team logo (JPG/PNG only, max 10MB)</p>
+                    </div>
+
+                    <button type="submit" class="submit-btn">
+                        <i class="fas fa-users"></i> Register Team
+                    </button>
+                </form>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

@@ -1,0 +1,616 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+    height: 100vh;
+    overflow-x: hidden;
+}
+
+/* Header styles */
+.header {
+    background-color: #8B0039;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 70px;
+    z-index: 100;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-left: 50px;
+}
+
+.logo img {
+    width: 60px;
+    height: auto;
+    border-radius: 50%;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+}
+
+.logo img:hover {
+    transform: scale(1.1);
+}
+
+.slams-title {
+    font-size: 24px;
+    font-weight: bold;
+    font-family: 'Poppins', sans-serif;
+    color: #FFD700;
+    letter-spacing: 1px;
+}
+
+.menu-icons {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-right: 20px;
+}
+
+.user-profile {
+    position: relative;
+    display: inline-block;
+}
+
+.user-profile img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #fff;
+}
+
+.user-profile i {
+    font-size: 24px;
+    color: #fff;
+}
+
+/* Dropdown styles */
+.dropdown-content {
+    position: absolute;
+    right: 0;
+    background-color: #8B0039;
+    color: #fff;
+    min-width: 180px;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+    top: 50px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease;
+    padding: 10px 0;
+    z-index: 104;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dropdown-content a {
+    padding: 10px 20px;
+    text-decoration: none;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.dropdown-content a:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    transform: translateX(5px);
+}
+
+.dropdown-content.show {
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Sidebar styles */
+.sidebar {
+    height: 100%;
+    width: 240px;
+    position: fixed;
+    top: 70px;
+    left: -240px;
+    background-color: #ffffff;
+    z-index: 99;
+    padding-top: 20px;
+    transition: all 0.3s ease;
+    box-shadow: 2px 0px 10px rgba(0, 0, 0, 0.2);
+    overflow-y: auto;
+}
+
+.sidebar a {
+    padding: 16px 24px;
+    text-decoration: none;
+    color: rgb(46, 0, 0);
+    font-size: 18px;
+    display: block;
+    transition: all 0.3s ease;
+    border-bottom: 1px solid #000000;
+}
+
+.sidebar a i {
+    margin-right: 15px;
+}
+
+.sidebar a:hover {
+    background-color: #a32600;
+    padding-left: 32px;
+    color: #fff;
+}
+
+.sidebar a.active {
+    background-color: #581000;
+    color: #fff;
+    padding-left: 32px;
+}
+
+.sidebar-btn {
+    font-size: 15px;
+    color: white;
+    background-color: #8B0039;
+    padding: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    cursor: pointer;
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 101;
+    border-radius: 5px;
+    transition: transform 0.3s ease;
+}
+
+.sidebar-btn:hover {
+    transform: scale(1.1);
+    background-color: #8B0039;
+}
+
+/* Sub-sidebar styling */
+.sub-sidebar {
+    display: none;
+    padding-left: 20px;
+    background-color: #f4f4f4;
+    border-left: 3px solid #3498db;
+    position: relative;
+    padding-top: 5px;
+}
+
+.sub-sidebar a {
+    padding: 8px 15px;
+    text-decoration: none;
+    font-size: 16px;
+    color: #333;
+    display: block;
+}
+
+.sub-sidebar a:hover {
+    background-color: #a32600;
+    color: white;
+}
+
+/* Main content area */
+.dashboard-container {
+    margin-top: 70px;
+    height: calc(100vh - 70px);
+    overflow-y: auto;
+    padding: 20px;
+    transition: margin-left 0.3s ease;
+    background-color: #f5f5f5;
+}
+
+/* Event details styles */
+.event-details-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.event-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.event-title {
+    font-size: 2rem;
+    color: #8B0039;
+    margin: 0;
+}
+
+.event-status {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+}
+
+.status-upcoming {
+    background-color: #E3F2FD;
+    color: #1976D2;
+}
+
+.status-ongoing {
+    background-color: #FFF3CD;
+    color: #856404;
+}
+
+.status-completed {
+    background-color: #FFEBEE;
+    color: #D32F2F;
+}
+
+.event-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    align-items: start;
+}
+
+.event-image-container {
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    height: auto;
+    max-width: 600px;
+    margin: 0 auto 20px;
+    background-color: #FFFFFF;
+    display: inline-block;
+}
+
+.event-image {
+    width: 100%;
+    height: auto;
+    display: block;
+    transition: transform 0.3s ease;
+    object-fit: contain;
+    object-position: center;
+}
+
+.event-image:hover {
+    transform: scale(1.02);
+}
+
+.event-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.info-section {
+    margin-bottom: 25px;
+}
+
+.info-title {
+    font-size: 1.1rem;
+    color: #8B0039;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.info-title i {
+    margin-right: 10px;
+    color: #9C4D9A;
+}
+
+.info-content {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #333;
+}
+
+.sports-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.sport-tag {
+    background-color: #f5f5f5;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    color: #8B0039;
+    display: flex;
+    align-items: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.sport-tag:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    background-color: #e6d5e7;
+}
+
+.sport-tag i {
+    margin-right: 8px;
+    font-size: 0.9rem;
+}
+
+/* Sport-specific icons and colors */
+.sport-basketball {
+    color: #FF6B00;
+}
+
+.sport-volleyball {
+    color: #1E88E5;
+}
+
+.sport-soccer {
+    color: #43A047;
+}
+
+.sport-badminton {
+    color: #8E24AA;
+}
+
+.sport-tabletennis {
+    color: #E53935;
+}
+
+.sport-chess {
+    color: #5D4037;
+}
+
+.pdf-container {
+    margin-top: 15px;
+}
+
+.pdf-link {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 15px;
+    background-color: #f5f5f5;
+    border-radius: 5px;
+    color: #D32F2F;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.pdf-link:hover {
+    background-color: #FFEBEE;
+    transform: translateY(-2px);
+}
+
+.pdf-link i {
+    margin-right: 8px;
+    font-size: 1.2rem;
+}
+
+.action-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #e0e0e0;
+}
+
+.btn {
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}
+
+.btn i {
+    margin-right: 8px;
+}
+
+.btn-back {
+    background-color: #f0f2f5;
+    color: #8B0039;
+    border: 1px solid #d1d5db;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-back:hover {
+    background-color: #e5e7eb;
+    color: #3a0d3a;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-color: #9ca3af;
+}
+
+.btn-back:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.btn-back i {
+    transition: transform 0.2s ease;
+}
+
+.btn-back:hover i {
+    transform: translateX(-2px);
+}
+
+.btn-join-team {
+    background-color: #8B0039;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-join-team:hover {
+    background-color: #6a002b;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.btn-join-team:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
+}
+
+.btn-join-team::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+}
+
+.btn-join-team:hover::after {
+    transform: translateX(100%);
+}
+
+.btn-join-team i {
+    transition: transform 0.2s ease;
+}
+
+.btn-join-team:hover i {
+    transform: scale(1.1);
+}
+
+/* Modal for logout confirmation */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background-color: white;
+    margin: 15% auto;
+    padding: 20px;
+    border-radius: 8px;
+    width: 300px;
+    text-align: center;
+}
+
+.confirm-btn,
+.cancel-btn {
+    padding: 10px 20px;
+    margin: 10px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.confirm-btn {
+    background-color: #8B0039;
+    color: white;
+}
+
+.cancel-btn {
+    background-color: #ccc;
+    color: black;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .event-content {
+        grid-template-columns: 1fr;
+    }
+
+    .event-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .action-buttons {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .dashboard-container {
+        margin-top: 60px;
+        padding: 15px;
+    }
+
+    .event-details-container {
+        padding: 15px;
+    }
+
+    .header {
+        padding: 10px 15px;
+    }
+
+    .sidebar-btn {
+        top: 15px;
+        left: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .event-title {
+        font-size: 1.5rem;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+    }
+
+    .btn-back,
+    .btn-join-team {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .dashboard-container {
+        margin-top: 50px;
+        padding: 10px;
+    }
+
+    .event-details-container {
+        padding: 10px;
+    }
+}

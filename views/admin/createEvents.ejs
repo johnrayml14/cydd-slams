@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Events - SLAMS</title>
+    <link rel="stylesheet" href="/styles/adminhome.css">
+    <link rel="stylesheet" href="/styles/adminDashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+    * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    color: #fff;
+    background: linear-gradient(135deg, #ffffff, #c6d6d8);
+    line-height: 1.6;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1200px;
+    padding: 0 20px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header {
+    background-color: #8B0039;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 3px 30px;
+    width: 100%;
+}
+
+.header .logo {
+    margin-left: 20px;
+    display: flex;
+    align-items: center;
+    font-family: 'Playfair Display', serif;
+    gap: 12px;
+}
+
+.header .logo img {
+    width: 60px;
+    height: auto;
+    max-width: 100%;
+    border-radius: 50%;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.nav {
+    display: flex;
+    gap: 15px;
+    justify-content: flex-end;
+}
+
+.slams-title {
+    font-size: 24px;
+    font-weight: bold;
+    font-family: 'Poppins', sans-serif;
+    color: #FFD700;
+    letter-spacing: 1px;
+}
+
+.nav a {
+    text-decoration: none;
+    font-weight: bold;
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 20px;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.nav .login-btn:hover {
+    background-color: #FFD700;
+    color: #8B0039;
+}
+
+.user-profile {
+    position: relative;
+    display: inline-block;
+}
+
+.user-profile i {
+    font-size: 20px;
+    color: #fff;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.user-profile i:hover {
+    transform: scale(1.1);
+}
+
+/* Dropdown Content */
+.dropdown-content {
+    position: absolute;
+    right: 0;
+    top: 40px;
+    background-color: #621616;
+    color: #fff;
+    min-width: 180px;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.5);
+    border-radius: 0;
+    padding: 15px;
+    z-index: 104;
+    border: 1px solid #ffcc00;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.user-profile:hover .dropdown-content {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+}
+
+.dropdown-content a {
+    padding: 10px 15px;
+    text-decoration: none;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+.dropdown-content a i {
+    margin-right: 10px;
+    width: 16px;
+    text-align: center;
+}
+
+.dropdown-content a:hover {
+    background-color: #9a1b1b;
+    transform: translateX(5px);
+}
+
+/* Sidebar Styles */
+.sidebar {
+    height: 100%;
+    width: 240px;
+    position: fixed;
+    top: 72px;
+    left: -240px;
+    background-color: #ffffff;
+    z-index: 999;
+    padding-top: 20px;
+    transition: all 0.3s ease;
+    box-shadow: 2px 0px 10px rgba(0, 0, 0, 0.2);
+    overflow-y: auto;
+}
+
+.sidebar a {
+    padding: 16px 24px;
+    text-decoration: none;
+    color: rgb(46, 0, 0);
+    font-size: 18px;
+    display: block;
+    transition: all 0.3s ease;
+    border-bottom: 1px solid #000000;
+}
+
+.sidebar a i {
+    margin-right: 15px;
+}
+
+.sidebar a:hover {
+    background-color: #a32600;
+    padding-left: 32px;
+    color: white;
+}
+
+.sidebar a.active {
+    background-color: #581000;
+    color: #fff;
+    padding-left: 32px;
+}
+
+.sidebar-btn {
+    font-size: 15px;
+    color: white;
+    background-color: #8B0039;
+    padding: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    cursor: pointer;
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 1001;
+    border-radius: 5px;
+    transition: transform 0.3s ease;
+}
+
+.sidebar-btn:hover {
+    transform: scale(1.1);
+    background-color: #8B0039;
+}
+
+/* Team dropdown styles */
+.team-dropdown-btn {
+    padding: 16px 24px;
+    text-decoration: none;
+    color: rgb(46, 0, 0);
+    font-size: 18px;
+    display: block;
+    cursor: pointer;
+    background-color: #ffffff;
+    border-bottom: 1px solid #000000;
+    transition: all 0.3s ease;
+}
+
+.team-dropdown-btn:hover {
+    background-color: #a32600;
+    padding-left: 32px;
+    color: white;
+}
+
+.team-dropdown-content {
+    display: none;
+    background-color: #f4f4f4;
+    padding-left: 20px;
+    border-left: 3px solid #3498db;
+}
+
+.team-dropdown-content a {
+    padding: 8px 15px;
+    text-decoration: none;
+    font-size: 16px;
+    color: #333;
+    display: block;
+    border-bottom: 1px solid #000000;
+}
+
+.team-dropdown-content a:hover {
+    background-color: #a32600;
+    color: white;
+}
+
+.team-dropdown-btn.active+.team-dropdown-content {
+    display: block;
+}
+
+:root {
+    --primary-color: #3f0808;
+    --secondary-color: #FFFFFF;
+    --accent-color: #FFD700;
+    --text-color: #000000;
+    --light-gray: #F5F5F5;
+    --dark-red: #621616;
+    --hover-color: #a32600;
+    --active-color: #581000;
+}
+
+.dashboard-container {
+    margin: 0;
+    padding: 15px;
+    width: 100%;
+    min-height: calc(100vh - 72px);
+}
+
+.create-event-form {
+    background-color: var(--secondary-color);
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    width: 100%;
+    margin: 0 auto;
+}
+
+.create-event-form h1 {
+    margin-bottom: 20px;
+    color: var(--primary-color);
+    font-size: 1.8rem;
+    text-align: center;
+    border-bottom: 2px solid #e0e0e0;
+    padding-bottom: 10px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 16px;
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.form-group input, 
+.form-group textarea, 
+.form-group select {
+    width: 100%;
+    padding: 10px;
+    font-size: 15px;
+    border: 1px solid #DDD;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    background-color: var(--secondary-color);
+}
+
+.form-group input:focus, 
+.form-group textarea:focus, 
+.form-group select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(139, 0, 57, 0.2);
+    outline: none;
+}
+
+.form-group input[type="file"] {
+    padding: 8px;
+    background-color: transparent;
+}
+
+.form-group button {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    width: auto;
+    min-width: 120px;
+    transition: all 0.3s ease;
+    margin-top: 0;
+}
+
+.form-group button:hover {
+    background-color: var(--hover-color);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.form-buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 30px;
+    width: 100%;
+    gap: 15px;
+}
+
+.submit-btn {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    width: auto;
+    min-width: 140px;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.submit-btn:hover {
+    background-color: var(--hover-color);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.back-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 24px;
+    background-color: var(--primary-color);
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    width: auto;
+    min-width: 140px;
+    gap: 8px;
+}
+
+.back-btn:hover {
+    background-color: var(--hover-color);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.form-group label i {
+    margin-right: 8px;
+    color: var(--primary-color);
+}
+
+.sports-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
+    margin-top: 10px;
+    background-color: var(--light-gray);
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.sport-option {
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    margin: 0;
+    background-color: var(--secondary-color);
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    min-height: 40px;
+    height: auto;
+    position: relative;
+    overflow: visible;
+}
+
+.sport-option:hover {
+    background-color: #F9E6E6;
+}
+
+.sport-option input[type="checkbox"] {
+    margin-right: 1px;
+    margin-left: -50px;
+    accent-color: var(--primary-color);
+    transform: scale(1.1);
+    position: relative;
+    z-index: 1;
+    flex-shrink: 0;
+}
+
+.sport-option label {
+    margin-top: 10px;
+    margin-left: -50px;
+    color: var(--text-color);
+    font-weight: normal;
+    cursor: pointer;
+    flex: 1;
+    font-size: 14px;
+    line-height: 1.3;
+    display: block;
+    position: relative;
+    z-index: 1;
+    overflow: visible;
+    white-space: normal;
+    word-wrap: break-word;
+}
+
+.form-group textarea {
+    min-height: 120px;
+    resize: vertical;
+    font-family: inherit;
+    line-height: 1.5;
+    padding: 12px;
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 3000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding-top: 100px;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: 0 auto;
+    padding: 30px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    animation: scaleIn 0.3s ease-in-out;
+    position: relative;
+}
+
+@keyframes scaleIn {
+    from { transform: scale(0.9); }
+    to { transform: scale(1); }
+}
+
+.modal-content h3 {
+    font-size: 22px;
+    color: #333;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.confirm-btn, .cancel-btn {
+    padding: 12px 25px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 6px;
+    border: none;
+    transition: all 0.3s;
+    min-width: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.confirm-btn {
+    background-color: #4CAF50;
+    color: #fff;
+}
+
+.cancel-btn {
+    background-color: #f44336;
+    color: #fff;
+}
+
+.confirm-btn:hover {
+    background-color: #45a049;
+    transform: translateY(-2px);
+}
+
+.cancel-btn:hover {
+    background-color: #e53935;
+    transform: translateY(-2px);
+}
+
+.close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 24px;
+    color: #999;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.close-btn:hover {
+    color: #333;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+.sport-option input[type="checkbox"] {
+    margin-left: -50px;
+}
+
+    .sports-container {
+        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+        gap: 8px;
+    }
+    
+    .sport-option {
+        padding: 6px;
+        min-height: 36px;
+    }
+    
+    .sport-option label {
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 767px) {
+    .dashboard-container {
+        padding: 10px;
+    }
+    
+    .create-event-form {
+        padding: 15px;
+    }
+    
+    .sports-container {
+        grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+        gap: 6px;
+        padding: 8px;
+    }
+    
+    .sport-option {
+        padding: 5px;
+        min-height: 32px;
+    }
+    
+    .sport-option input[type="checkbox"] {
+    margin-left: -45px;
+}
+    .sport-option label {
+        font-size: 14px;
+    }
+    
+    .sport-option input {
+        margin-right: 6px;
+        transform: scale(1);
+    }
+    
+    .header .logo img {
+        width: 50px;
+    }
+    
+    .form-buttons {
+        flex-direction: row-reverse; /* This will reverse the order for mobile */
+        justify-content: flex-start; /* Align items to the left */
+        gap: 10px;
+    }
+    
+    .submit-btn, .back-btn {
+        width: auto;
+        min-width: 120px;
+        font-size: 14px;
+        padding: 10px 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .sports-container {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    }
+    
+    .sport-option label {
+        margin-left: -40px;
+        font-size: 13px;
+    }
+    
+    .create-event-form h2 {
+        font-size: 1.5rem;
+    }
+    
+    .header .logo img {
+        width: 40px;
+    }
+    
+    .header {
+        padding: 3px 15px;
+    }
+    
+    .form-buttons {
+        gap: 10px;
+    }
+    
+    .form-group button, .back-btn {
+        padding: 10px 15px;
+        font-size: 10px;
+    }
+}
+</style>
+</head>
+<body>
+    <!-- Sidebar Menu -->
+    <div id="mySidebar" class="sidebar">
+        <a href="/admin/home"><i class="fas fa-home"></i> Home</a>
+        <a href="/admin/posts"><i class="fas fa-newspaper"></i> Posts</a>
+        <a href="/admin/events" class="active"><i class="fas fa-calendar-alt"></i> Events</a>
+        <a href="/admin/coach"><i class="fas fa-chalkboard-teacher"></i> Coordinator Request</a>
+        <!-- Team dropdown section -->
+        <a href="javascript:void(0);" class="team-dropdown-btn"><i class="fas fa-users-cog"></i> Teams</a>
+        <div class="team-dropdown-content">
+            <a href="/admin/team-request"><i class="fas fa-users"></i> Team Request</a>
+        <a href="/admin/registered-team"><i class="fas fa-landmark"></i> All Team</a>
+        </div>
+        <a href="/admin/users"><i class="fas fa-users"></i> Players</a>
+    </div>
+
+    <!-- Sidebar toggle button -->
+    <span class="sidebar-btn" onclick="toggleNav()">&#9776;</span>
+
+    <header class="header">
+        <div class="logo">
+            <a href="/admin/home" style="text-decoration: none;">
+                <img src="/images/cityYouth.jpg" alt="SLAMS Logo">
+            </a>
+        </div>
+
+        <div class="menu-bar">
+            <div class="user-profile">
+                <i class="fas fa-user-shield"></i>
+                <div class="dropdown-content">
+                    <a href="/admin/adminProfile">
+                        <i class="fas fa-cogs" style="margin-right: 8px;"></i> Admin
+                    </a>
+                    <a href="javascript:void(0);" class="logout-btn" onclick="showLogoutModal()">
+                        <i class="fas fa-sign-out-alt" style="margin-right: 8px;"></i> Log Out
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="dashboard-container">
+        
+
+        <div class="create-event-form">
+            <h1 style="color: var(--primary-color);">Create Event</h1>
+            <form action="/admin/events/create" method="POST" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="title">
+                        <i class="fas fa-heading"></i> Event Title:
+                    </label>
+                    <input type="text" id="title" name="title" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">
+                        <i class="fas fa-align-left"></i> Event Description:
+                    </label>
+                    <textarea id="description" name="description" rows="5" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-basketball-ball"></i> Sports Included:
+                    </label>
+                    <div class="sports-container">
+                        <div class="sport-option">
+                            <input type="checkbox" id="basketball" name="sports[]" value="basketball">
+                            <label for="basketball">Basketball</label>
+                        </div>
+                        <div class="sport-option">
+                            <input type="checkbox" id="volleyball" name="sports[]" value="volleyball">
+                            <label for="volleyball">Volleyball</label>
+                        </div>
+                        <div class="sport-option">
+                            <input type="checkbox" id="soccer" name="sports[]" value="soccer">
+                            <label for="soccer">Soccer</label>
+                        </div>
+                        <div class="sport-option">
+                            <input type="checkbox" id="badminton_single" name="sports[]" value="badminton_single">
+                            <label for="badminton_single">Badminton (Single)</label>
+                        </div>
+                        <div class="sport-option">
+                            <input type="checkbox" id="badminton_double" name="sports[]" value="badminton_double">
+                            <label for="badminton_double">Badminton (Double)</label>
+                        </div>
+
+                        <div class="sport-option">
+                            <input type="checkbox" id="sepak_takraw" name="sports[]" value="sepak_takraw">
+                            <label for="sepak_takraw">Sepak Takraw</label>
+                        </div>
+                        <div class="sport-option">
+                            <input type="checkbox" id="table_tennis" name="sports[]" value="table_tennis">
+                            <label for="table_tennis">Table Tennis</label>
+                        </div>
+                        <div class="sport-option">
+                            <input type="checkbox" id="chess" name="sports[]" value="chess">
+                            <label for="chess">Chess</label>
+                        </div>
+                        <div class="sport-option">
+                            <input type="checkbox" id="athletics_100m" name="sports[]" value="athletics_100m">
+                            <label for="athletics_100m">Athletics - 100m Sprint</label>
+                        </div>
+                        <div class="sport-option">
+                            <input type="checkbox" id="athletics_200m" name="sports[]" value="athletics_200m">
+                            <label for="athletics_200m">Athletics - 200m Sprint</label>
+                        </div>
+                        <div class="sport-option">
+                            <input type="checkbox" id="athletics_400m" name="sports[]" value="athletics_400m">
+                            <label for="athletics_400m">Athletics - 400m Sprint</label>
+                        </div>
+                        <div class="sport-option">
+                            <input type="checkbox" id="athletics_800m" name="sports[]" value="athletics_800m">
+                            <label for="athletics_800m">Athletics - 800m Run</label>
+                        </div>
+                        <div class="sport-option">
+                            <input type="checkbox" id="athletics_1500m" name="sports[]" value="athletics_1500m">
+                            <label for="athletics_1500m">Athletics - 1500m Run</label>
+                        </div>
+                        <div class="sport-option">
+                            <input type="checkbox" id="athletics_5000m" name="sports[]" value="athletics_5000m">
+                            <label for="athletics_5000m">Athletics - 5000m Run</label>
+                        </div>
+                        <div class="sport-option">
+                            <input type="checkbox" id="athletics_longjump" name="sports[]" value="athletics_longjump">
+                            <label for="athletics_longjump">Athletics - Long Jump</label>
+                        </div>
+                        <div class="sport-option">
+                            <input type="checkbox" id="athletics_highjump" name="sports[]" value="athletics_highjump">
+                            <label for="athletics_highjump">Athletics - High Jump</label>
+                        </div>
+                        <div class="sport-option">
+                            <input type="checkbox" id="athletics_triplejump" name="sports[]" value="athletics_triplejump">
+                            <label for="athletics_triplejump">Athletics - Triple Jump</label>
+                        </div>
+                        <div class="sport-option">
+                            <input type="checkbox" id="athletics_shotput" name="sports[]" value="athletics_shotput">
+                            <label for="athletics_shotput">Athletics - Shot Put</label>
+                        </div>
+                        <div class="sport-option">
+                            <input type="checkbox" id="athletics_javelin" name="sports[]" value="athletics_javelin">
+                            <label for="athletics_javelin">Athletics - Javelin Throw</label>
+                        </div>
+                        <div class="sport-option">
+                            <input type="checkbox" id="athletics_discusthrow" name="sports[]" value="athletics_discusthrow">
+                            <label for="athletics_discusthrow">Athletics - Discus Throw</label>
+                        </div>
+                        <div class="sport-option">
+                            <input type="checkbox" id="athletics_4x100" name="sports[]" value="athletics_4x100">
+                            <label for="athletics_4x100">Athletics - 4x100m Relay</label>
+                        </div>
+                        <div class="sport-option">
+                            <input type="checkbox" id="athletics_4x400" name="sports[]" value="athletics_4x400">
+                            <label for="athletics_4x400">Athletics - 4x400m Relay</label>
+                        </div>
+
+                        <div class="sport-option">
+                            <input type="checkbox" id="taekwondo" name="sports[]" value="taekwondo">
+                            <label for="taekwondo">Taekwondo</label>
+                        </div>
+                        <div class="sport-option">
+                            <input type="checkbox" id="arnis" name="sports[]" value="arnis">
+                            <label for="arnis">Arnis</label>
+                        </div>
+                        <div class="sport-option">
+                            <input type="checkbox" id="gymnastic" name="sports[]" value="gymnastic">
+                            <label for="gymnastic">Gymnastic</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add this after the Sports section -->
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-gamepad"></i> Esports Included:
+                    </label>
+                    <div class="sports-container">
+                        <div class="sport-option">
+                            <input type="checkbox" id="mobile_legends" name="esports[]" value="ml">
+                            <label for="mobile_legends">Mobile Legends</label>
+                        </div>
+                        <div class="sport-option">
+                            <input type="checkbox" id="codm" name="esports[]" value="codm">
+                            <label for="codm">CODM</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-trophy"></i> Other Activities:
+                    </label>
+                    <div class="sports-container">
+                        <div class="sport-option">
+                            <input type="checkbox" id="cheerdance" name="other_activities[]" value="cheerdance">
+                            <label for="cheerdance">Cheerdance</label>
+                        </div>
+                        <div class="sport-option">
+                            <input type="checkbox" id="dance_competition" name="other_activities[]" value="dance_competition">
+                            <label for="dance_competition">Dance Competition</label>
+                        </div>
+                        <div class="sport-option">
+                            <input type="checkbox" id="singing_contest" name="other_activities[]" value="singing_contest">
+                            <label for="singing_contest">Singing Contest</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="image">
+                        <i class="fas fa-image"></i> Event Image:
+                    </label>
+                    <input type="file" id="image" name="image" accept="image/*" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="date_schedule">
+                        <i class="fas fa-calendar-alt"></i> Event Date:
+                    </label>
+                    <input type="datetime-local" id="date_schedule" name="date_schedule" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="location">
+                        <i class="fas fa-map-marker-alt"></i> Event Location:
+                    </label>
+                    <input type="text" id="location" name="location" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="appointmentForm">
+                        <i class="fas fa-file-pdf"></i> Appointment Form (PDF):
+                    </label>
+                    <input type="file" id="appointmentForm" name="appointmentForm" accept=".pdf" required>
+                </div>
+
+                <div class="form-buttons">
+    <a href="/admin/events" class="back-btn">
+        <i class="fas fa-arrow-left"></i> Back to Events
+    </a>
+    
+    <button type="submit" class="submit-btn">
+        <i class="fas fa-plus-circle"></i> Post Event
+    </button>
+</div>
+            </form>
+            
+    </main>
+
+    <!-- Modal for logout confirmation -->
+     <div id="logoutModal" class="modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="hideLogoutModal()">&times;</button>
+            <h3>Are you sure you want to log out?</h3>
+            <div class="modal-buttons">
+                <button id="confirmLogout" class="confirm-btn">Confirm</button>
+                <button id="cancelLogout" class="cancel-btn">Cancel</button>
+            </div>
+        </div>
+
+    <script>
+        let isSidebarOpen = false;
+
+        function toggleNav() {
+            const sidebar = document.getElementById("mySidebar");
+            const content = document.querySelector(".dashboard-container");
+            const sidebarBtn = document.querySelector(".sidebar-btn");
+
+            if (isSidebarOpen) {
+                sidebar.style.left = "-240px";  
+                content.style.marginLeft = "0"; 
+                sidebarBtn.innerHTML = "&#9776;"; 
+            } else {
+                sidebar.style.left = "0";  
+                content.style.marginLeft = "0";  
+                sidebarBtn.innerHTML = "&#9776;"; 
+            }
+            isSidebarOpen = !isSidebarOpen;  
+        }
+
+        // Toggle the team dropdown
+        const teamDropdownBtn = document.querySelector('.team-dropdown-btn');
+        const teamDropdownContent = document.querySelector('.team-dropdown-content');
+
+        teamDropdownBtn.addEventListener('click', function() {
+            teamDropdownBtn.classList.toggle('active');
+            if (teamDropdownContent.style.display === "block") {
+                teamDropdownContent.style.display = "none";
+            } else {
+                teamDropdownContent.style.display = "block";
+            }
+        });
+
+        // Show the logout confirmation modal
+        function showLogoutModal() {
+            document.getElementById('logoutModal').style.display = 'block';
+        }
+
+        function hideLogoutModal() {
+            document.getElementById('logoutModal').style.display = 'none';
+        }
+
+        document.getElementById('confirmLogout').addEventListener('click', function() {
+            window.location.href = '/admin/logout';  
+        });
+
+        document.getElementById('cancelLogout').addEventListener('click', function() {
+            hideLogoutModal(); 
+        });
+
+        // Make the sports container items equal height
+        function equalizeSportsHeight() {
+            const sportsContainer = document.querySelector('.sports-container');
+            if (sportsContainer) {
+                const sportOptions = sportsContainer.querySelectorAll('.sport-option');
+                let maxHeight = 0;
+                
+                sportOptions.forEach(option => {
+                    option.style.height = 'auto';
+                });
+                
+                sportOptions.forEach(option => {
+                    if (option.offsetHeight > maxHeight) {
+                        maxHeight = option.offsetHeight;
+                    }
+                });
+                
+                sportOptions.forEach(option => {
+                    option.style.height = maxHeight + 'px';
+                });
+            }
+        }
+
+        // Run on load and resize
+        window.addEventListener('load', equalizeSportsHeight);
+        window.addEventListener('resize', equalizeSportsHeight);
+
+
+        document.querySelector('form').addEventListener('submit', function(e) {
+        // Validate at least one sport is selected
+        const checkedSports = document.querySelectorAll('input[name="sports[]"]:checked');
+        if (checkedSports.length === 0) {
+            e.preventDefault();
+            alert('Please select at least one sport');
+            return false;
+        }
+        
+        // Show loading state
+        const submitBtn = document.querySelector('button[type="submit"]');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Event...';
+        
+        // Optional: Log form data before submission
+        const formData = new FormData(this);
+    for (const [key, value] of formData.entries()) {
+        console.log(`${key}: ${value}`);
+    }
+});
+
+document.querySelector('form').addEventListener('submit', function(e) {
+    // Validate at least one category is selected
+    const checkedSports = document.querySelectorAll('input[name="sports[]"]:checked');
+    const checkedEsports = document.querySelectorAll('input[name="esports[]"]:checked');
+    const checkedActivities = document.querySelectorAll('input[name="other_activities[]"]:checked');
+    
+    if (checkedSports.length === 0 && checkedEsports.length === 0 && checkedActivities.length === 0) {
+        e.preventDefault();
+        alert('Please select at least one category (Sports, Esports, or Other Activities)');
+        return false;
+    }
+    
+    // Validate PDF file
+    const pdfFile = document.getElementById('appointmentForm').files[0];
+    if (pdfFile) {
+        const fileSize = pdfFile.size / 1024 / 1024; // in MB
+        if (fileSize > 10) {
+            e.preventDefault();
+            alert('PDF file size should not exceed 10MB');
+            return false;
+        }
+    }
+    
+    // Show loading state
+    const submitBtn = document.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Event...';
+});
+
+const userProfile = document.querySelector('.user-profile');
+        const dropdown = document.querySelector('.dropdown-content');
+        let hideTimeout;
+
+        userProfile.addEventListener('click', function(e) {
+            e.stopPropagation();
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        });
+    </script>
+</body>
+</html>

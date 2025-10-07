@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms and Conditions - SLAMS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles/frontpage.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4b1515;
+            --primary-dark: #3a0e12;
+            --secondary: #6a1b1b;
+            --text: #333333;
+            --text-light: #555555;
+            --text-lighter: #777777;
+            --border: #e0e0e0;
+            --bg: #f8f9fa;
+            --white: #ffffff;
+        }
+        
+        body {
+            background-color: var(--bg);
+            font-family: 'Poppins', sans-serif;
+            color: var(--text);
+            line-height: 1.7;
+        }
+        
+        .terms-container {
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 3rem;
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.08);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .terms-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+        
+        .terms-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            position: relative;
+            padding-bottom: 1.5rem;
+        }
+        
+        .terms-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 25%;
+            width: 50%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+        }
+        
+        .terms-container h1 {
+            color: var(--primary);
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+        
+        .terms-container .subtitle {
+            color: var(--text-light);
+            font-size: 1.1rem;
+            margin-bottom: 0;
+        }
+        
+        .terms-content {
+            max-height: 60vh;
+            overflow-y: auto;
+            padding: 2rem;
+            margin: 2rem 0;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background-color: var(--white);
+        }
+        
+        /* Custom scrollbar */
+        .terms-content::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .terms-content::-webkit-scrollbar-track {
+            background: var(--bg);
+        }
+        
+        .terms-content::-webkit-scrollbar-thumb {
+            background-color: var(--primary);
+            border-radius: 20px;
+        }
+        
+        .terms-content h2 {
+            color: var(--primary);
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            font-size: 1.4rem;
+            font-weight: 600;
+            position: relative;
+            padding-left: 1rem;
+        }
+        
+        .terms-content h2::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0.35em;
+            height: 1em;
+            width: 4px;
+            background: var(--secondary);
+            border-radius: 2px;
+        }
+        
+        .terms-content p {
+            margin-bottom: 1.25rem;
+            color: var(--text-light);
+            font-size: 1rem;
+        }
+        
+        .terms-content ul {
+            margin-bottom: 1.5rem;
+            padding-left: 1.5rem;
+        }
+        
+        .terms-content li {
+            margin-bottom: 0.5rem;
+            color: var(--text-light);
+        }
+        
+        .terms-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2.5rem;
+            gap: 1.5rem;
+        }
+        
+        .btn {
+            padding: 0.9rem 1.75rem;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            text-align: center;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-accept {
+            background-color: var(--primary);
+            color: var(--white);
+            border: 2px solid var(--primary);
+        }
+        
+        .btn-accept:hover {
+            background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(74, 21, 75, 0.2);
+        }
+        
+        .btn-decline {
+            background-color: var(--white);
+            color: var(--primary);
+            border: 2px solid var(--border);
+        }
+        
+        .btn-decline:hover {
+            background-color: var(--bg);
+            border-color: var(--text-lighter);
+            transform: translateY(-2px);
+        }
+        
+        @media (max-width: 768px) {
+            .terms-container {
+                padding: 2rem 1.5rem;
+                margin: 1.5rem;
+            }
+            
+            .terms-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">
+            <a href="/" style="text-decoration: none;">
+                <img src="/images/cityYouth.jpg" alt="SLAMS Logo">
+            </a>
+        </div>
+    </header>
+    
+    <main class="terms-container">
+        <div class="terms-header">
+            <h1>Terms and Conditions</h1>
+            <p class="subtitle">Last updated: <%= new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %></p>
+        </div>
+        
+        <div class="terms-content">
+            <h2>1. Terms of Service</h2>
+            <p>By accessing or using the SLAMS platform, you agree to be bound by these Terms and Conditions. If you disagree with any part of the terms, you may not access the service.</p>
+            <p>You must be at least 13 years of age to use this website. By using this website and agreeing to these terms, you warrant and represent that you are at least 13 years of age.</p>
+            
+            <h2>2. Privacy Policy</h2>
+            <p>Our Privacy Policy governs the collection, use, and disclosure of your personal information when you use our service. It informs you about:</p>
+            <ul>
+                <li>The types of information we collect</li>
+                <li>How we use your information</li>
+                <li>Who we share your information with</li>
+                <li>Your rights regarding your personal data</li>
+            </ul>
+            
+            <h2>3. Data Usage</h2>
+            <p>We collect the following types of information to provide and improve our services:</p>
+            <ul>
+                <li><strong>Account Information:</strong> Name, email, contact details</li>
+                <li><strong>Team Data:</strong> Team names, player information, schedules</li>
+                <li><strong>Usage Data:</strong> How you interact with our platform</li>
+            </ul>
+            <p>This data helps us personalize your experience, improve our services, and communicate important updates.</p>
+            
+            <h2>4. User Responsibilities</h2>
+            <p>As a user of SLAMS, you agree to:</p>
+            <ul>
+                <li>Maintain the confidentiality of your account credentials</li>
+                <li>Not share your account with others</li>
+                <li>Provide accurate and complete information</li>
+                <li>Comply with all applicable laws and regulations</li>
+                <li>Not engage in any activity that interferes with other users' experience</li>
+            </ul>
+            
+            <h2>5. Intellectual Property</h2>
+            <p>The SLAMS platform and its original content, features, and functionality are owned by us and are protected by international copyright, trademark, patent, trade secret, and other intellectual property or proprietary rights laws.</p>
+        </div>
+        
+        <form action="/accept-terms" method="POST" class="terms-actions">
+            <button type="button" class="btn btn-decline" onclick="window.location.href='/logout'">
+                <i class="fas fa-times"></i> Decline
+            </button>
+            <button type="submit" class="btn btn-accept">
+                <i class="fas fa-check"></i> Accept Terms
+            </button>
+        </form>
+    </main>
+</body>
+</html>

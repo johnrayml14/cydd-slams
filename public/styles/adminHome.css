@@ -1,0 +1,694 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    color: #fff;
+    background: linear-gradient(135deg, #ffffff, #c6d6d8);
+    line-height: 1.6;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1200px;
+    padding: 0 20px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header {
+    background-color: #8B0039;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 3px 30px;
+    width: 100%;
+    position: relative;
+    z-index: 100;
+}
+
+.header .logo {
+    margin-left: 20px;
+    display: flex;
+    align-items: center;
+    font-family: 'Playfair Display', serif;
+    gap: 12px;
+}
+
+.header .logo img {
+    width: 60px;
+    height: auto;
+    border-radius: 50%;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.nav {
+    display: flex;
+    gap: 15px;
+    justify-content: flex-end;
+}
+
+.slams-title {
+    font-size: 24px;
+    font-weight: bold;
+    font-family: 'Poppins', sans-serif;
+    color: #FFD700;
+    letter-spacing: 1px;
+}
+
+.nav a {
+    text-decoration: none;
+    font-weight: bold;
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 20px;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.nav .login-btn:hover {
+    background-color: #FFD700;
+    color: #8B0039;
+}
+
+.user-profile i {
+    font-size: 20px;
+    color: #fff;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.user-profile i:hover {
+    transform: scale(1.1);
+}
+
+/* Sidebar Styles */
+.sidebar {
+    height: 100%;
+    width: 240px;
+    position: fixed;
+    top: 72px;
+    left: -240px;
+    background-color: #ffffff;
+    z-index: 999;
+    padding-top: 20px;
+    transition: all 0.3s ease;
+    box-shadow: 2px 0px 10px rgba(0, 0, 0, 0.2);
+    overflow-y: auto;
+}
+
+.sidebar a {
+    padding: 16px 24px;
+    text-decoration: none;
+    color: rgb(46, 0, 0);
+    font-size: 18px;
+    display: block;
+    transition: all 0.3s ease;
+    border-bottom: 1px solid #000000;
+}
+
+.sidebar a i {
+    margin-right: 15px;
+}
+
+.sidebar a:hover {
+    background-color: #a32600;
+    padding-left: 32px;
+    color: white;
+}
+
+.sidebar a.active {
+    background-color: #581000;
+    color: #fff;
+    padding-left: 32px;
+}
+
+.sidebar-btn {
+    font-size: 15px;
+    color: white;
+    background-color: #8B0039;
+    padding: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    cursor: pointer;
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 1001;
+    border-radius: 5px;
+    transition: transform 0.3s ease;
+}
+
+.sidebar-btn:hover {
+    transform: scale(1.1);
+    background-color: #8B0039;
+}
+
+/* Team dropdown styles */
+.team-dropdown-btn {
+    padding: 16px 24px;
+    text-decoration: none;
+    color: rgb(46, 0, 0);
+    font-size: 18px;
+    display: block;
+    cursor: pointer;
+    background-color: #ffffff;
+    border-bottom: 1px solid #000000;
+    transition: all 0.3s ease;
+}
+
+.team-dropdown-btn:hover {
+    background-color: #a32600;
+    padding-left: 32px;
+    color: white;
+}
+
+.team-dropdown-content {
+    display: none;
+    background-color: #f4f4f4;
+    padding-left: 20px;
+    border-left: 3px solid #3498db;
+}
+
+.team-dropdown-content a {
+    padding: 8px 15px;
+    text-decoration: none;
+    font-size: 16px;
+    color: #333;
+    display: block;
+    border-bottom: 1px solid #000000;
+}
+
+.team-dropdown-content a:hover {
+    background-color: #a32600;
+    color: white;
+}
+
+.team-dropdown-btn.active+.team-dropdown-content {
+    display: block;
+}
+
+/* Dashboard Container */
+.dashboard-container {
+    padding: 40px;
+    padding-top: 90px;
+    transition: padding-left 0.3s ease;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
+}
+
+/* Events Section */
+.events-section {
+    margin-bottom: 60px;
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+.events-section h3 {
+    font-size: 24px;
+    margin-bottom: 25px;
+    border-bottom: 2px solid #e0e0e0;
+    padding-bottom: 10px;
+    color: #333;
+}
+
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 25px;
+}
+
+.gallery-card {
+    background-color: #fff;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+}
+
+.gallery-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+}
+
+.gallery-card img {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+}
+
+.card-content {
+    padding: 15px 20px;
+}
+
+.card-content h4 {
+    margin: 0 0 10px;
+    font-size: 18px;
+    color: #2e2e2e;
+}
+
+.card-content p {
+    margin: 4px 0;
+    font-size: 14px;
+    color: #555;
+}
+
+.gallery-card.expired {
+    filter: grayscale(80%);
+    opacity: 0.7;
+}
+
+.events-section p {
+    color: #777;
+    font-size: 15px;
+}
+
+.event-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    height: 100%;
+}
+
+/* Dropdown Content - Fixed for desktop */
+.dropdown-content {
+    position: absolute;
+    right: 0;
+    top: 50px;
+    background-color: #621616;
+    color: #fff;
+    min-width: 180px;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.5);
+    border-radius: 0;
+    padding: 15px;
+    z-index: 104;
+    border: 1px solid #ffcc00;
+    display: none;
+}
+
+.dropdown-content.show {
+    display: block;
+}
+
+.dropdown-content a {
+    padding: 10px 15px;
+    text-decoration: none;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+.dropdown-content a i {
+    margin-right: 10px;
+    width: 16px;
+    text-align: center;
+}
+
+.dropdown-content a:hover {
+    background-color: #9a1b1b;
+    transform: translateX(5px);
+}
+
+.logout-btn {
+    background-color: rgb(236, 26, 26);
+    padding: 5px 15px;
+    margin-left: 5px;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    margin-top: 8px;
+    transition: background-color 0.3s ease;
+}
+
+.logout-btn:hover {
+    background-color: #E64A19;
+}
+
+/* Notification Dropdown */
+.notification-wrapper {
+    position: relative;
+    display: inline-block;
+    margin-right: 20px;
+}
+
+#notificationDropdown {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 40px;
+    background: #fff;
+    width: 320px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    z-index: 1000;
+    overflow: hidden;
+}
+
+.notification-wrapper:hover #notificationDropdown,
+#notificationDropdown.show {
+    display: block;
+}
+
+#notificationDropdown div {
+    padding: 15px;
+}
+
+#notificationDropdown h4 {
+    margin: 0 0 10px 0;
+    font-size: 16px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 8px;
+    color: #333;
+}
+
+#notificationDropdown a {
+    color: #141010;
+    text-decoration: none;
+    font-size: 14px;
+    display: block;
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+    transition: background-color 0.2s;
+}
+
+#notificationDropdown a:hover {
+    background-color: #f5f5f5;
+}
+
+/* Success Message */
+.success-box {
+    max-width: 500px;
+    margin: 20px auto;
+    padding: 15px 20px;
+    background-color: #4CAF50;
+    color: #fff;
+    border-radius: 8px;
+    font-weight: 500;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: opacity 0.5s ease;
+    animation: slideFade 0.4s ease-out;
+}
+
+@keyframes slideFade {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Improved Logout Modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 3000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding-top: 100px;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: 0 auto;
+    padding: 30px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    animation: scaleIn 0.3s ease-in-out;
+    position: relative;
+}
+
+@keyframes scaleIn {
+    from {
+        transform: scale(0.9);
+    }
+
+    to {
+        transform: scale(1);
+    }
+}
+
+.modal-content h3 {
+    font-size: 22px;
+    color: #333;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.confirm-btn,
+.cancel-btn {
+    padding: 12px 25px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 6px;
+    border: none;
+    transition: all 0.3s;
+    min-width: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.confirm-btn {
+    background-color: #4CAF50;
+    color: #fff;
+}
+
+.cancel-btn {
+    background-color: #f44336;
+    color: #fff;
+}
+
+.confirm-btn:hover {
+    background-color: #45a049;
+    transform: translateY(-2px);
+}
+
+.cancel-btn:hover {
+    background-color: #e53935;
+    transform: translateY(-2px);
+}
+
+.close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 24px;
+    color: #999;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.close-btn:hover {
+    color: #333;
+}
+
+/* Responsive Design */
+/* Tablet: 768px - 1024px */
+@media (max-width: 1024px) {
+    .container {
+        padding: 0 15px;
+    }
+
+    .header {
+        padding: 2px 20px;
+    }
+
+    .header .logo img {
+        margin-left: 20px;
+        width: 45px;
+    }
+
+    .header .slams-title {
+        font-size: 18px;
+    }
+
+    .nav a {
+        padding: 7px 14px;
+        font-size: 14px;
+    }
+
+    .sidebar {
+        top: 70px;
+        width: 200px;
+        left: -200px;
+    }
+
+    .sidebar a {
+        font-size: 16px;
+        padding: 14px 20px;
+    }
+
+    .dashboard-container {
+        padding: 15px;
+        padding-top: 80px;
+    }
+
+    .sidebar-btn {
+        left: 15px;
+        top: 15px;
+    }
+
+    .gallery-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 20px;
+    }
+
+    /* Notification dropdown adjustments for tablet */
+    #notificationDropdown {
+        width: 300px;
+        right: 0;
+    }
+}
+
+/* Mobile: 350px - 767px */
+@media (max-width: 767px) {
+    .header {
+        padding: 8px 15px;
+        height: 60px;
+    }
+
+    .logo img {
+        width: 80px;
+        margin-left: 40px;
+    }
+
+    .sidebar {
+        top: 60px;
+        width: 220px;
+        left: -220px;
+        padding-top: 10px;
+    }
+
+    .sidebar a {
+        font-size: 16px;
+        padding: 16px 20px;
+        min-height: 50px;
+    }
+
+    .sidebar a i {
+        margin-right: 12px;
+        width: 20px;
+        text-align: center;
+    }
+
+    .sidebar-btn {
+        left: 10px;
+        top: 13px;
+        font-size: 18px;
+        padding: 8px 12px;
+        min-width: 44px;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .dashboard-container {
+        padding: 20px;
+        padding-top: 80px;
+    }
+
+    .events-section {
+        padding: 20px;
+    }
+
+    .gallery-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .modal-content {
+        width: 90%;
+        max-width: 300px;
+        padding: 20px;
+    }
+
+    .confirm-btn,
+    .cancel-btn {
+        padding: 10px 15px;
+        font-size: 14px;
+        width: 100px;
+    }
+
+    /* Notification dropdown adjustments for mobile */
+    #notificationDropdown {
+        width: 280px;
+        right: -80px;
+        top: 40px;
+    }
+}
+
+/* Small mobile optimization */
+@media (max-width: 400px) {
+    .logo img {
+        width: 70px;
+        margin-left: 35px;
+    }
+
+    #notificationDropdown {
+        width: 250px;
+        right: -60px;
+    }
+
+    .sidebar {
+        width: 200px;
+    }
+
+    .sidebar a {
+        font-size: 15px;
+        padding: 14px 15px;
+    }
+
+    .confirm-btn,
+    .cancel-btn {
+        padding: 10px 12px;
+        font-size: 13px;
+        width: 90px;
+    }
+}

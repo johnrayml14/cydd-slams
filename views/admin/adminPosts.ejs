@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Posts - SLAMS</title>
+    <link rel="stylesheet" href="/styles/adminHome.css">
+    <link rel="stylesheet" href="/styles/adminPosts.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        
+    </style>
+</head>
+<body>
+    <!-- Sidebar Menu -->
+    <div id="mySidebar" class="sidebar">
+        <a href="/admin/home" ><i class="fas fa-home"></i> Home</a>
+        <a href="/admin/posts" class="active"><i class="fas fa-newspaper"></i> Posts</a>
+        <a href="/admin/events"><i class="fas fa-calendar-alt"></i> Events</a>
+        <a href="/admin/coach"><i class="fas fa-chalkboard-teacher"></i> Coordinator Request</a>
+        
+        <!-- Team dropdown section -->
+        <a href="javascript:void(0);" class="team-dropdown-btn"><i class="fas fa-users-cog"></i> Teams</a>
+        <div class="team-dropdown-content">
+            <a href="/admin/team-request"><i class="fas fa-users"></i> Team Request</a>
+        <a href="/admin/registered-team"><i class="fas fa-landmark"></i> All Team</a>
+        </div>
+        <a href="/admin/users"><i class="fas fa-users"></i> Players</a>
+    </div>
+    <!-- Sidebar toggle button -->
+    <span class="sidebar-btn" onclick="toggleNav()">&#9776;</span>
+    <header class="header">
+        <div class="logo">
+            <a href="/admin/home" style="text-decoration: none;">
+                <img src="/images/cityYouth.jpg" alt="SLAMS Logo">
+            </a>
+        </div>
+        <div class="user-profile">
+            <% if (admin && admin.profilePic) { %>
+            <img src="<%= admin.profilePic %>" 
+                alt="Admin Profile" 
+                style="width: 35px; height: 35px; border-radius: 50%; border: 2px solid #007bff; object-fit: cover;">
+            <% } else { %>
+            <i class="fas fa-user-shield"></i>
+            <% } %>
+
+            <div class="dropdown-content">
+                <a href="/admin/adminProfile">
+                    <i class="fas fa-cogs" style="margin-right: 8px;"></i> Admin
+                </a>
+                <a href="javascript:void(0);" class="logout-btn" onclick="showLogoutModal()">
+                    <i class="fas fa-sign-out-alt" style="margin-right: 8px;"></i> Log Out
+                </a>
+            </div>
+        </div>
+    </header>
+    <% if (success) { %>
+        <div class="alert alert-success" style="text-align: center; margin: 10px auto; max-width: 600px;">
+            Post deleted successfully!
+        </div>
+    <% } %>
+
+    <% if (error) { %>
+        <div class="alert alert-danger" style="text-align: center; margin: 10px auto; max-width: 600px;">
+            Error deleting post. Please try again.
+        </div>
+    <% } %>
+    <main class="dashboard-container">
+    <!-- Floating Action Button -->
+    <div class="fab-container">
+        <button id="fabBtn" class="fab-btn">
+            <i class="fas fa-plus"></i>
+        </button>
+        <div id="fabMenu" class="fab-menu">
+            <a href="/admin/add-post"><i class="fas fa-plus"></i> Add Post </a>
+        </div>
+    </div>
+
+    <div class="post-container">
+        <% posts.forEach(post => { %>
+            <div class="post-card" data-post-id="<%= post.id %>">
+                <!-- Post Options (3-dot menu) -->
+                <div class="post-options">
+                    <button class="dots-btn" onclick="toggleDropdown(<%= post.id %>)">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </button>
+                    <div class="dropdown-menu" id="dropdown-<%= post.id %>">
+                        <button onclick="openDeleteModal(<%= post.id %>)">
+                            <i class="fas fa-trash-alt"></i> Delete
+                        </button>
+                    </div>
+                </div>
+
+                <div class="post-header">
+                    <div class="admin-info">
+                        <% if (admin.profilePic) { %>
+                            <img src="<%= admin.profilePic %>" class="admin-pic" alt="Admin Profile">
+                        <% } else { %>
+                            <i class="fas fa-user-shield admin-default-icon"></i>
+                        <% } %>
+                        <div class="post-meta">
+                            <strong><%= admin.name %></strong><br>
+                            <small><%= formatTimeAgo(post.created_at) %></small>
+                        </div>
+                    </div>
+                </div>
+                <div class="post-caption">
+                    <p><%= post.caption %></p>
+                </div>
+
+                <% if (post.images && post.images.length > 0 || post.videos && post.videos.length > 0) { %>
+                    <div class="media-container">
+                        <% 
+                           const allMedia = [];
+                        if (post.images) {
+                            allMedia.push(...post.images.map(img => 
+                                typeof img === 'string' ? { type: 'image', src: img } : { type: 'image', src: img.url }
+                            ));
+                        }
+                        if (post.videos) {
+                            allMedia.push(...post.videos.map(video => 
+                                typeof video === 'string' ? { type: 'video', src: video } : { type: 'video', src: video.url }
+                            ));
+                        }
+                        const mediaCount = allMedia.length;
+                    %>
+                        
+                        <% if (mediaCount === 1) { %>
+                            <div class="media-grid">
+                                <% if (allMedia[0].type === 'image') { %>
+                                    <img src="<%= allMedia[0].src %>" class="single-media media-item" 
+                                        onclick="openLightbox('<%= allMedia[0].src %>', 'image', 0, <%= mediaCount %>)">
+                                <% } else { %>
+                                    <div class="video-wrapper">
+                                        <video controls class="single-media media-item">
+                                            <source src="<%= allMedia[0].src %>" type="video/mp4">
+                                            Your browser does not support the video tag.
+                                        </video>
+                                    </div>
+                                <% } %>
+                            </div>
+                        <% } else if (mediaCount === 2) { %>
+                            <div class="media-grid grid-2">
+                                <% allMedia.forEach((media, index) => { %>
+                                    <% if (media.type === 'image') { %>
+                                        <img src="<%= media.src %>" class="media-item" 
+                                            onclick="openLightbox('<%= media.src %>', 'image', <%= index %>, <%= mediaCount %>)">
+                                    <% } else { %>
+                                        <div class="video-wrapper">
+                                            <video controls class="media-item">
+                                                <source src="<%= media.src %>" type="video/mp4">
+                                                Your browser does not support the video tag.
+                                            </video>
+                                        </div>
+                                    <% } %>
+                                <% }); %>
+                            </div>
+                        <% } else if (mediaCount === 3) { %>
+                            <div class="media-grid grid-3">
+                                <% allMedia.forEach((media, index) => { %>
+                                    <% if (media.type === 'image') { %>
+                                        <img src="<%= media.src %>" class="media-item" 
+                                            onclick="openLightbox('<%= media.src %>', 'image', <%= index %>, <%= mediaCount %>)">
+                                    <% } else { %>
+                                        <div class="video-wrapper">
+                                            <video controls class="media-item">
+                                                <source src="<%= media.src %>" type="video/mp4">
+                                                Your browser does not support the video tag.
+                                            </video>
+                                        </div>
+                                    <% } %>
+                                <% }); %>
+                            </div>
+                        <% } else if (mediaCount >= 4) { %>
+                            <div class="media-grid grid-4-plus">
+                                <% allMedia.slice(0, 4).forEach((media, index) => { %>
+                                    <div style="position: relative;">
+                                        <% if (media.type === 'image') { %>
+                                            <img src="<%= media.src %>" class="media-item" 
+                                                onclick="openLightbox('<%= media.src %>', 'image', <%= index %>, <%= mediaCount %>)">
+                                        <% } else { %>
+                                            <div class="video-wrapper">
+                                                <video controls class="media-item">
+                                                    <source src="<%= media.src %>" type="video/mp4">
+                                                    Your browser does not support the video tag.
+                                                </video>
+                                            </div>
+                                        <% } %>
+                                        <% if (index === 3 && mediaCount > 4) { %>
+                                            <div class="more-photos-overlay" onclick="openLightbox('<%= allMedia[0].src %>', 'image', 0, <%= mediaCount %>)">
+                                                +<%= mediaCount - 4 %> more
+                                            </div>
+                                        <% } %>
+                                    </div>
+                                <% }); %>
+                            </div>
+                        <% } %>
+                    </div>
+                <% } %>
+
+                <!-- Like/Dislike Section -->
+                <div class="post-actions">
+                    <button class="like-btn <%= post.hasLiked ? 'active' : '' %>" 
+                            onclick="reactToPost(<%= post.id %>, '<%= post.hasLiked ? 'remove' : 'like' %>')">
+                        <i class="fas fa-thumbs-up"></i> 
+                        <span class="like-count"><%= post.likes || 0 %></span>
+                    </button>
+                    <button class="dislike-btn <%= post.hasDisliked ? 'active' : '' %>" 
+                            onclick="reactToPost(<%= post.id %>, '<%= post.hasDisliked ? 'remove' : 'dislike' %>')">
+                        <i class="fas fa-thumbs-down"></i> 
+                        <span class="dislike-count"><%= post.dislikes || 0 %></span>
+                    </button>
+                </div>
+            </div>
+        <% }); %>
+    </div>
+
+    <!-- Lightbox for media viewing -->
+    <div id="lightbox" class="lightbox">
+        <span class="lightbox-close" onclick="closeLightbox()">&times;</span>
+        <div class="lightbox-content">
+            <img id="lightbox-image" class="lightbox-media" style="display: none;">
+            <video id="lightbox-video" class="lightbox-media" controls style="display: none;"></video>
+            <div class="lightbox-nav">
+                <button onclick="navigateLightbox(-1)">&#10094;</button>
+                <button onclick="navigateLightbox(1)">&#10095;</button>
+            </div>
+            <div id="lightbox-counter" class="lightbox-counter"></div>
+        </div>
+    </div>
+</main>
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteModal" class="modal">
+    <div class="modal-content">
+        <p>Are you sure you want to delete this post?</p>
+        <form id="deleteForm" method="POST">
+            <button type="submit" class="confirm-btn">Yes</button>
+            <button type="button" class="cancel-btn" onclick="closeDeleteModal()">No</button>
+        </form>
+    </div>
+</div>
+
+
+    <!-- Modal for logout confirmation -->
+     <div id="logoutModal" class="modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="hideLogoutModal()">&times;</button>
+            <h3>Are you sure you want to log out?</h3>
+            <div class="modal-buttons">
+                <button id="confirmLogout" class="confirm-btn">Confirm</button>
+                <button id="cancelLogout" class="cancel-btn">Cancel</button>
+            </div>
+        </div>
+
+    <script>
+       let isSidebarOpen = false; 
+        function toggleNav() {
+            const sidebar = document.getElementById("mySidebar");
+            const content = document.querySelector(".dashboard-container");
+            const sidebarBtn = document.querySelector(".sidebar-btn");
+
+            if (isSidebarOpen) {
+                sidebar.style.left = "-240px";  
+                document.body.classList.remove("sidebar-open");
+                sidebarBtn.innerHTML = "&#9776;";
+            } else {
+                sidebar.style.left = "0";
+                document.body.classList.add("sidebar-open");
+                sidebarBtn.innerHTML = "&#9776;";
+            }
+
+            isSidebarOpen = !isSidebarOpen;
+        }
+
+        // Toggle the team dropdown
+        const teamDropdownBtn = document.querySelector('.team-dropdown-btn');
+        const teamDropdownContent = document.querySelector('.team-dropdown-content');
+
+        teamDropdownBtn.addEventListener('click', function() {
+            teamDropdownBtn.classList.toggle('active');
+            if (teamDropdownContent.style.display === "block") {
+                teamDropdownContent.style.display = "none";
+            } else {
+                teamDropdownContent.style.display = "block";
+            }
+        });
+
+        // Show the logout confirmation modal
+        function showLogoutModal() {
+            document.getElementById('logoutModal').style.display = 'block';
+        }
+        function hideLogoutModal() {
+            document.getElementById('logoutModal').style.display = 'none';
+        }
+        document.getElementById('confirmLogout').addEventListener('click', function() {
+            window.location.href = '/admin/logout';  
+        });
+        document.getElementById('cancelLogout').addEventListener('click', function() {
+            hideLogoutModal(); 
+        });
+
+        // Toggle FAB menu
+        document.getElementById("fabBtn").addEventListener("click", () => {
+            const menu = document.getElementById("fabMenu");
+            menu.style.display = menu.style.display === "block" ? "none" : "block";
+        });
+
+        // Close menu if clicked outside
+        document.addEventListener("click", function (event) {
+            const fab = document.getElementById("fabBtn");
+            const menu = document.getElementById("fabMenu");
+            if (!fab.contains(event.target) && !menu.contains(event.target)) {
+                menu.style.display = "none";
+            }
+        });
+
+        // Lightbox functionality
+        let currentMediaIndex = 0;
+        let currentMediaItems = [];
+        let currentMediaType = '';
+
+        function openLightbox(src, type, index, totalCount) {
+            if (type === 'video') return; // Don't open lightbox for videos
+            
+            // Get all media items from the current post
+            const postCard = event.target.closest('.post-card');
+            const allMedia = [];
+            
+            // Get all images
+            const images = postCard.querySelectorAll('.media-item[src]');
+            images.forEach(img => {
+                allMedia.push({
+                    src: img.src.split('/uploads/adminPosts/')[1],
+                    type: 'image'
+                });
+            });
+            
+            // Update global variables
+            currentMediaItems = allMedia;
+            currentMediaIndex = index;
+            currentMediaType = type;
+            
+            // Show the lightbox
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImage = document.getElementById('lightbox-image');
+            const lightboxVideo = document.getElementById('lightbox-video');
+            const lightboxCounter = document.getElementById('lightbox-counter');
+            
+            if (type === 'image') {
+                lightboxImage.style.display = 'block';
+                lightboxVideo.style.display = 'none';
+                lightboxImage.src = '/uploads/adminPosts/' + src;
+            } else {
+                lightboxImage.style.display = 'none';
+                lightboxVideo.style.display = 'block';
+                lightboxVideo.src = '/uploads/adminPosts/' + src;
+            }
+            
+            lightboxCounter.textContent = `${index + 1} / ${totalCount}`;
+            lightbox.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox() {
+            document.getElementById('lightbox').style.display = 'none';
+            document.body.style.overflow = 'auto';
+            
+            // Pause video when closing
+            const lightboxVideo = document.getElementById('lightbox-video');
+            lightboxVideo.pause();
+        }
+
+        function navigateLightbox(direction) {
+            currentMediaIndex += direction;
+            
+            // Wrap around if at beginning or end
+            if (currentMediaIndex < 0) {
+                currentMediaIndex = currentMediaItems.length - 1;
+            } else if (currentMediaIndex >= currentMediaItems.length) {
+                currentMediaIndex = 0;
+            }
+            
+            const media = currentMediaItems[currentMediaIndex];
+            const lightboxImage = document.getElementById('lightbox-image');
+            const lightboxVideo = document.getElementById('lightbox-video');
+            const lightboxCounter = document.getElementById('lightbox-counter');
+            
+            if (media.type === 'image') {
+                lightboxImage.style.display = 'block';
+                lightboxVideo.style.display = 'none';
+                lightboxImage.src = '/uploads/adminPosts/' + media.src;
+            } else {
+                lightboxImage.style.display = 'none';
+                lightboxVideo.style.display = 'block';
+                lightboxVideo.src = '/uploads/adminPosts/' + media.src;
+                lightboxVideo.play();
+            }
+            
+            lightboxCounter.textContent = `${currentMediaIndex + 1} / ${currentMediaItems.length}`;
+        }
+
+        // Close lightbox when clicking outside the content
+        document.getElementById('lightbox').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeLightbox();
+            }
+        });
+
+        // Keyboard navigation for lightbox
+        document.addEventListener('keydown', function(e) {
+            const lightbox = document.getElementById('lightbox');
+            if (lightbox.style.display === 'flex') {
+                if (e.key === 'Escape') {
+                    closeLightbox();
+                } else if (e.key === 'ArrowLeft') {
+                    navigateLightbox(-1);
+                } else if (e.key === 'ArrowRight') {
+                    navigateLightbox(1);
+                }
+            }
+        });
+
+        // Add this to your existing JavaScript
+        async function reactToPost(postId, action) {
+        try {
+            const response = await fetch(`/admin/posts/${postId}/react/${action}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include'
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                const postElement = document.querySelector(`.post-card[data-post-id="${postId}"]`);
+                
+                if (postElement) {
+                    // Update counts
+                    postElement.querySelector('.like-count').textContent = data.likes;
+                    postElement.querySelector('.dislike-count').textContent = data.dislikes;
+                    
+                    // Update button states
+                    const likeBtn = postElement.querySelector('.like-btn');
+                    const dislikeBtn = postElement.querySelector('.dislike-btn');
+                    
+                    likeBtn.classList.toggle('active', data.hasLiked);
+                    dislikeBtn.classList.toggle('active', data.hasDisliked);
+                    
+                    // Update onclick handlers
+                    likeBtn.onclick = () => reactToPost(postId, data.hasLiked ? 'remove' : 'like');
+                    dislikeBtn.onclick = () => reactToPost(postId, data.hasDisliked ? 'remove' : 'dislike');
+                }
+            }
+        } catch (error) {
+            console.error('Error reacting to post:', error);
+        }
+    }
+
+        //Toggle delete modal
+            function toggleDropdown(postId) {
+                document.querySelectorAll('.dropdown-menu').forEach(menu => {
+                    if (!menu.id.includes(postId)) menu.style.display = 'none';
+                });
+                const menu = document.getElementById('dropdown-' + postId);
+                menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
+            }
+
+            function openDeleteModal(postId) {
+                const modal = document.getElementById('deleteModal');
+                const form = document.getElementById('deleteForm');
+                form.action = `/admin/posts/${postId}/delete`;
+                modal.style.display = 'block';
+            }
+
+            function closeDeleteModal() {
+                document.getElementById('deleteModal').style.display = 'none';
+            }
+
+            // Close modal when clicking outside
+            window.onclick = function(event) {
+                const modal = document.getElementById('deleteModal');
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            };
+
+            //delete message
+            setTimeout(() => {
+                document.querySelectorAll('.alert').forEach(el => {
+                    el.style.display = 'none';
+                });
+            }, 1500);
+    </script>
+</body>
+
+</html>

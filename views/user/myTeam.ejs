@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Team</title>
+    <link rel="stylesheet" href="/styles/frontpage.css">
+    <link rel="stylesheet" href="/styles/myTeam.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap" rel="stylesheet">
+
+</head>
+<body>
+    <!-- Sidebar Menu -->
+    <div id="mySidebar" class="sidebar">
+        <a href="/homepage"><i class="fas fa-home"></i> Home</a>
+        <a href="/posts"><i class="fas fa-newspaper"></i> Posts</a>
+        <a href="/gallery"><i class="fas fa-image"></i> Gallery</a>
+        <a href="/events"><i class="fas fa-calendar-alt"></i> Events</a>
+        <!-- Team link with sub-sidebar -->
+        <a href="javascript:void(0);" class="team-link" onclick="toggleSubSidebar()"><i class="fas fa-users-cog"></i> Teams</a>
+        <div class="sub-sidebar" id="subSidebar">
+            <a href="/my-team" class="active"><i class="fas fa-user"></i> My Team</a>
+            <a href="/join-team"><i class="fas fa-user-plus"></i> Join Team</a>
+            <a href="/all-teams"><i class="fas fa-users"></i> All Teams</a>
+        </div>
+    </div>
+
+    <!-- Sidebar toggle button -->
+    <span class="sidebar-btn" onclick="toggleNav()">&#9776;</span>
+
+    <header class="header">
+        <div class="logo">
+            <a href="/homepage" style="text-decoration: none;">
+                <img src="/images/cityYouth.jpg" alt="SLAMS Logo">
+            </a>
+            <span class="slams-title">SLAMS</span>
+        </div>
+
+        <div class="user-profile">
+            <% if (user.profile) { %>
+                <img src="<%= user.profile %>" alt="Profile" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #4A154B;">
+            <% } else { %>
+                <i class="fas fa-user-shield" style="font-size: 24px;"></i>
+            <% } %>
+            
+        </div>
+    </header>
+    <div class="dropdown-content">
+                <a href="/profile">
+                    <i class="fas fa-cogs" style="margin-right: 8px;"></i> Profile
+                </a>
+                <a href="javascript:void(0);" class="logout-btn" onclick="showLogoutModal()">
+                    <i class="fas fa-sign-out-alt" style="margin-right: 8px;"></i> Log Out
+                </a>
+            </div>
+
+    <main class="dashboard-container">
+        <div class="page-header">
+            <h1 class="page-title"><i class="fas fa-users"></i> My Teams</h1>
+        </div>
+
+        <% if (teams && teams.length > 0) { %>
+            <div class="teams-list">
+                <% teams.forEach(team => { %>
+                    <div class="team-item" onclick="showTeamModal('<%= team.id %>')">
+                        <div class="team-logo">
+                            <% if (team.teamProfile) { %>
+                                <img src="<%= team.teamProfile %>" alt="<%= team.teamName %>">
+                            <% } else { %>
+                                <i class="fas fa-users"></i>
+                            <% } %>
+                        </div>
+                        
+                        <div class="team-info">
+                            <h3 class="team-name"><%= team.teamName %></h3>
+                            <div class="team-meta">
+                                <span class="meta-item">
+                                    <i class="fas fa-landmark"></i> <%= team.organization %>
+                                </span>
+                                <% if (team.event_title) { %>
+                                    <span class="meta-item">
+                                        <i class="fas fa-calendar-alt"></i> <%= team.event_title %>
+                                    </span>
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        <% } else { %>
+            <div class="no-teams">
+                <i class="fas fa-users"></i>
+                <h3>No Teams Joined</h3>
+                <p>You haven't joined any teams yet. <a href="/join-team">Join a team</a> to get started.</p>
+            </div>
+        <% } %>
+    </main>
+
+    <!-- Team Details Modal -->
+    <div class="modal" id="teamModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-users"></i> <span id="modalTeamName"></span></h2>
+                <button class="close-modal" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="team-header">
+                    <div class="team-avatar">
+                        <img id="modalTeamLogo" src="" alt="Team Logo">
+                        <i class="fas fa-users" id="modalTeamIcon"></i>
+                    </div>
+                    <div class="team-details">
+                        <h3 id="modalOrganization"></h3>
+                        <div class="team-meta-grid" id="modalTeamMeta">
+                            <!-- Dynamic content will be inserted here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Coach Section -->
+                <div class="coach-section">
+                    <h3 class="section-title"><i class="fas fa-user-tie"></i> Team Coordinator</h3>
+                    <div class="coach-info" id="coachInfo">
+                        <!-- Coach info will be inserted here -->
+                    </div>
+                </div>
+
+                <!-- Players Section -->
+                <div class="players-section">
+                    <div class="section-header">
+                        <h3><i class="fas fa-users"></i> Player Roster</h3>
+                        <span class="player-count" id="playerCount">0 players</span>
+                    </div>
+                    <div class="players-grid" id="playersList">
+                        <!-- Players will be inserted here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for logout confirmation -->
+    <div id="logoutModal" class="modal">
+        <div class="modal-content">
+            <h3>Are you sure you want to log out?</h3>
+            <button id="confirmLogout" class="confirm-btn">Confirm</button>
+            <button id="cancelLogout" class="cancel-btn">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        let isSidebarOpen = false;
+
+        function toggleNav() {
+            const sidebar = document.getElementById("mySidebar");
+            const content = document.querySelector(".dashboard-container");
+            const sidebarBtn = document.querySelector(".sidebar-btn");
+
+            if (isSidebarOpen) {
+                sidebar.style.left = "-240px";  
+                content.style.marginLeft = "0"; 
+                sidebarBtn.innerHTML = "&#9776;"; 
+            } else {
+                sidebar.style.left = "0";  
+                content.style.marginLeft = "0";  
+                sidebarBtn.innerHTML = "&#9776;"; 
+            }
+            isSidebarOpen = !isSidebarOpen;  
+        }
+        function applySidebarState() {
+            const sidebar = document.getElementById("mySidebar");
+            const content = document.querySelector(".dashboard-container");
+            const sidebarBtn = document.querySelector(".sidebar-btn");
+
+            if (isSidebarOpen) {
+                sidebar.style.left = "0";
+                content.style.marginLeft = "240px";
+                sidebarBtn.innerHTML = "&#9776;";
+            } else {
+                sidebar.style.left = "-240px";
+                content.style.marginLeft = "0";
+                sidebarBtn.innerHTML = "&#9776;";
+            }
+        }
+
+        function toggleSubSidebar() {
+            const subSidebar = document.getElementById("subSidebar");
+            const teamLink = document.querySelector(".team-link");
+
+            if (subSidebar.style.display === "block") {
+                subSidebar.style.display = "none";
+                teamLink.classList.remove("active");
+                localStorage.setItem('subSidebarOpen', 'false');
+            } else {
+                subSidebar.style.display = "block";
+                teamLink.classList.add("active");
+                localStorage.setItem('subSidebarOpen', 'true');
+            }
+        }
+
+        function applySubSidebarState() {
+            const subSidebar = document.getElementById("subSidebar");
+            const teamLink = document.querySelector(".team-link");
+            const isSubSidebarOpen = localStorage.getItem('subSidebarOpen') === 'true';
+
+            if (isSubSidebarOpen) {
+                subSidebar.style.display = "block";
+                teamLink.classList.add("active");
+            } else {
+                subSidebar.style.display = "none";
+                teamLink.classList.remove("active");
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            applySidebarState();
+            applySubSidebarState();
+        });
+
+        // Show the logout confirmation modal
+        function showLogoutModal() {
+            document.getElementById('logoutModal').style.display = 'block';
+        }
+
+        function hideLogoutModal() {
+            document.getElementById('logoutModal').style.display = 'none';
+        }
+
+        document.getElementById('confirmLogout').addEventListener('click', function() {
+            window.location.href = '/logout';  
+        });
+
+        document.getElementById('cancelLogout').addEventListener('click', function() {
+            hideLogoutModal(); 
+        });
+
+        // User profile dropdown functionality
+        const userProfile = document.querySelector('.user-profile');
+        const dropdown = document.querySelector('.dropdown-content');
+        let hideTimeout;
+
+        // Show dropdown when hovering profile
+        userProfile.addEventListener('mouseenter', () => {
+            clearTimeout(hideTimeout);
+            dropdown.classList.add('show');
+        });
+
+        // Hide dropdown when leaving both profile and dropdown
+        userProfile.addEventListener('mouseleave', (e) => {
+            // Check if we're moving to the dropdown
+            if (!dropdown.contains(e.relatedTarget)) {
+                hideTimeout = setTimeout(() => {
+                    dropdown.classList.remove('show');
+                }, 1000);
+            }
+        });
+
+        // Keep dropdown visible when hovering over it
+        dropdown.addEventListener('mouseenter', () => {
+            clearTimeout(hideTimeout);
+        });
+
+        // Hide dropdown when leaving it
+        dropdown.addEventListener('mouseleave', (e) => {
+            // Check if we're moving to the profile
+            if (!userProfile.contains(e.relatedTarget)) {
+                hideTimeout = setTimeout(() => {
+                    dropdown.classList.remove('show');
+                }, 1000);
+            }
+        });
+        
+        // Touch support for dropdown on mobile
+        userProfile.addEventListener('click', (e) => {
+            if (window.innerWidth <= 767) {
+                e.stopPropagation();
+                dropdown.classList.toggle('show');
+            }
+        });
+        
+        // Close dropdown when tapping outside on mobile
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth <= 767 && 
+                !userProfile.contains(e.target) && 
+                dropdown.classList.contains('show')) {
+                dropdown.classList.remove('show');
+            }
+        });
+        
+        // Notification dropdown functionality
+        function toggleNotificationForm() {
+            const dropdown = document.getElementById('notificationDropdown');
+            dropdown.style.display = (dropdown.style.display === 'block') ? 'none' : 'block';
+        }
+
+        // Close notification dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            const dropdown = document.getElementById('notificationDropdown');
+            const bellWrapper = document.querySelector('.notification-wrapper');
+            if (dropdown && !bellWrapper.contains(e.target)) {
+                dropdown.style.display = "none";
+            }
+        });
+
+        // Team Modal Functions
+        function showTeamModal(teamId) {
+            fetch(`/my-team/${teamId}`)
+                .then(response => response.json())
+                .then(data => {
+                    const modal = document.getElementById('teamModal');
+                    const team = data.team;
+                    const players = data.players;
+
+                    // Set team name
+                    document.getElementById('modalTeamName').textContent = team.teamName;
+
+                    // Set team logo
+                    const teamLogo = document.getElementById('modalTeamLogo');
+                    const teamIcon = document.getElementById('modalTeamIcon');
+                    if (team.teamProfile) {
+                        teamLogo.src = `${team.teamProfile}`;
+                        teamLogo.style.display = 'block';
+                        teamIcon.style.display = 'none';
+                    } else {
+                        teamLogo.style.display = 'none';
+                        teamIcon.style.display = 'block';
+                    }
+
+                    // Set organization
+                    document.getElementById('modalOrganization').textContent = team.organization || 'No organization specified';
+
+                    // Set team meta info
+                    const metaContainer = document.getElementById('modalTeamMeta');
+                    metaContainer.innerHTML = '';
+                    
+                    // Event meta card
+                    if (team.event_title) {
+                        const eventItem = document.createElement('div');
+                        eventItem.className = 'meta-card';
+                        eventItem.innerHTML = `
+                            <h4>Event</h4>
+                            <p><i class="fas fa-calendar-alt"></i> ${team.event_title}</p>
+                        `;
+                        metaContainer.appendChild(eventItem);
+                    }
+
+                    // Created at meta card
+                    const createdItem = document.createElement('div');
+                    createdItem.className = 'meta-card';
+                    createdItem.innerHTML = `
+                        <h4>Created</h4>
+                        <p><i class="fas fa-clock"></i> ${new Date(team.created_at).toLocaleDateString()}</p>
+                    `;
+                    metaContainer.appendChild(createdItem);
+
+                    // Organization type meta card
+                    const orgItem = document.createElement('div');
+                    orgItem.className = 'meta-card';
+                    orgItem.innerHTML = `
+                        <h4>Organization Type</h4>
+                        <p><i class="fas fa-landmark"></i> ${team.organization || 'Not specified'}</p>
+                    `;
+                    metaContainer.appendChild(orgItem);
+
+                    // Set coach info
+                    const coachContainer = document.getElementById('coachInfo');
+                    coachContainer.innerHTML = '';
+                    
+                    if (team.coach_name) {
+                        coachContainer.innerHTML = `
+                            <div class="coach-avatar">
+                                ${team.coach_profile ? 
+                                    `<img src="${team.coach_profile}" alt="${team.coach_name}">` : 
+                                    `<i class="fas fa-user-tie"></i>`}
+                            </div>
+                            <div class="coach-details">
+                                <h4>${team.coach_name}</h4>
+                                ${team.coach_email ? `<p><i class="fas fa-envelope"></i> <a href="mailto:${team.coach_email}">${team.coach_email}</a></p>` : ''}
+                                ${team.coach_phone ? `<p><i class="fas fa-phone"></i> ${team.coach_phone}</p>` : ''}
+                            </div>
+                        `;
+                    } else {
+                        coachContainer.innerHTML = `
+                            <div class="coach-avatar">
+                                <i class="fas fa-user-tie"></i>
+                            </div>
+                            <div class="coach-details">
+                                <h4>No Coordinator Assigned</h4>
+                                <p>This team currently has no coordinator assigned</p>
+                            </div>
+                        `;
+                    }
+
+                    // Set players list
+                    const playersContainer = document.getElementById('playersList');
+                    playersContainer.innerHTML = '';
+                    
+                    // Update player count
+                    document.getElementById('playerCount').textContent = `${players.length} ${players.length === 1 ? 'player' : 'players'}`;
+                    
+                    if (players.length > 0) {
+                        players.forEach(player => {
+                            const playerCard = document.createElement('div');
+                            playerCard.className = 'player-card';
+                            playerCard.innerHTML = `
+                                <div class="player-header">
+                                    <div class="player-avatar">
+                                        ${player.user_profile ? 
+                                            `<img src="${player.user_profile}" alt="${player.player_name}">` : 
+                                            `<i class="fas fa-user"></i>`}
+                                    </div>
+                                    <div class="player-name">${player.player_name}</div>
+                                </div>
+                                <div class="player-body">
+                                    ${player.sex ? `
+                                        <div class="player-detail">
+                                            <i class="fas fa-venus-mars"></i>
+                                            <span>${player.sex}</span>
+                                        </div>
+                                    ` : ''}
+                                    ${player.age ? `
+                                        <div class="player-detail">
+                                            <i class="fas fa-birthday-cake"></i>
+                                            <span>${player.age} years old</span>
+                                        </div>
+                                    ` : ''}
+                                    ${team.organization === 'school' ? `
+                                        <div class="player-detail">
+                                            <i class="fas fa-school"></i>
+                                            <span>${player.school || 'Not specified'}</span>
+                                        </div>
+                                        ${player.year_level ? `
+                                            <div class="player-detail">
+                                                <i class="fas fa-graduation-cap"></i>
+                                                <span>Year ${player.year_level}</span>
+                                            </div>
+                                        ` : ''}
+                                    ` : `
+                                        <div class="player-detail">
+                                            <i class="fas fa-map-marker-alt"></i>
+                                            <span>${player.barangay || 'Not specified'}</span>
+                                        </div>
+                                    `}
+                                </div>
+                            `;
+                            playersContainer.appendChild(playerCard);
+                        });
+                    } else {
+                        playersContainer.innerHTML = `
+                            <div class="no-players">
+                                <i class="fas fa-user-slash"></i>
+                                <h4>No Players Found</h4>
+                                <p>This team currently has no players</p>
+                            </div>
+                        `;
+                    }
+
+                    // Show modal
+                    modal.style.display = 'flex';
+                    document.body.style.overflow = 'hidden';
+                })
+                .catch(error => {
+                    console.error('Error fetching team details:', error);
+                    alert('Failed to load team details');
+                });
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('teamModal');
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('teamModal');
+            const logoutModal = document.getElementById('logoutModal');
+            
+            if (event.target === modal) {
+                closeModal();
+            }
+            if (event.target === logoutModal) {
+                hideLogoutModal();
+            }
+        }
+    </script>
+</body>
+
+</html>
+

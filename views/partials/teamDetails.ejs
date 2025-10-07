@@ -1,0 +1,80 @@
+<div class="team-details-header">
+    <% if (team.teamProfile) { %>
+        <img src="<%= team.teamProfile %>" class="team-details-profile" alt="<%= team.teamName %>">
+    <% } else { %>
+        <div class="team-details-profile">
+            <i class="fas fa-users"></i>
+        </div>
+    <% } %>
+    <div class="team-details-info">
+        <h2><%= team.teamName %></h2>
+        <div class="team-details-meta">
+            <i class="fas fa-building"></i> <%= team.organization.charAt(0).toUpperCase() + team.organization.slice(1) %>
+        </div>
+        <div class="team-details-meta">
+            <i class="fas fa-calendar-alt"></i> Created: <%= formatDate(team.created_at) %>
+        </div>
+    </div>
+</div>
+
+<% if (team.event_title) { %>
+    <div class="event-section">
+        <h3><i class="fas fa-calendar-check"></i> Event</h3>
+        <p><strong><%= team.event_title %></strong></p>
+        <p><%= team.event_description %></p>
+        <div class="event-meta">
+            <span><i class="far fa-calendar-alt"></i> <%= formatDate(team.date_schedule) %></span>
+            <span><i class="fas fa-map-marker-alt"></i> <%= team.location %></span>
+        </div>
+    </div>
+<% } %>
+
+<% if (team.event_sports) { %>
+    <div class="team-sports">
+        <h3><i class="fas fa-running"></i> Sports</h3>
+        <% team.event_sports.split(',').forEach(sport => { %>
+            <span class="sport-tag"><%= sport.trim() %></span>
+        <% }); %>
+    </div>
+<% } %>
+
+<div class="coach-section">
+    <h3><i class="fas fa-user-tie"></i> Coordinator</h3>
+    <div class="coach-info">
+        <p><strong><%= team.coach_name %></strong></p>
+        <p><i class="fas fa-envelope"></i> <%= team.coach_email %></p>
+        <p><i class="fas fa-phone"></i> <%= team.coach_phone %></p>
+    </div>
+</div>
+
+<div class="players-section">
+    <h3><i class="fas fa-users"></i> Players (<%= players.length %>)</h3>
+    <div class="players-list">
+        <% players.forEach(player => { %>
+            <div class="player-card">
+                <div class="player-header">
+                    <% if (player.user_profile) { %>
+                        <img src="<%= player.user_profile %>" class="player-avatar" alt="<%= player.player_name %>">
+                    <% } else { %>
+                        <div class="player-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                    <% } %>
+                    <div>
+                        <h4 class="player-name"><%= player.player_name %></h4>
+                        <div class="player-meta"><%= player.age %> years • <%= player.sex %></div>
+                    </div>
+                </div>
+                <% if (team.organization === 'school') { %>
+                    <div class="player-meta"><i class="fas fa-school"></i> <%= player.school %></div>
+                    <div class="player-meta"><i class="fas fa-graduation-cap"></i> <%= player.year_level %></div>
+                <% } else { %>
+                    <div class="player-meta"><i class="fas fa-map-marker-alt"></i> Barangay: <%= player.barangay %></div>
+                <% } %>
+                <div class="player-meta"><i class="fas fa-phone"></i> <%= player.contact_number %></div>
+                <div class="player-meta"><i class="fas fa-running"></i> <%= player.sports %></div>
+            </div>
+        <% }); %>
+    </div>
+
+</div>

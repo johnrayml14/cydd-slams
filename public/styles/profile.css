@@ -1,0 +1,362 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.profile-container {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 800px;
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+    /* Added transition for smooth height changes */
+    transition: all 0.3s ease;
+}
+
+.profile-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 140px;
+    background: linear-gradient(90deg, #4b6cb7 0%, #182848 100%);
+    z-index: 0;
+    border-radius: 10px 10px 0 0;
+}
+
+.back-button {
+    position: absolute;
+    top: 30px;
+    left: 30px;
+    color: white;
+    font-size: 20px;
+    z-index: 2;
+    text-decoration: none;
+    transition: transform 0.3s;
+}
+
+.back-button:hover {
+    transform: translateX(-5px);
+}
+
+h1 {
+    text-align: center;
+    color: white;
+    margin: 10px 0 40px;
+    position: relative;
+    z-index: 1;
+    font-weight: 700;
+    font-size: 28px;
+}
+
+h1 i {
+    margin-right: 15px;
+    font-size: 32px;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    color: #155724;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    position: relative;
+    z-index: 1;
+}
+
+.alert-success i {
+    margin-right: 10px;
+    font-size: 20px;
+}
+
+.profile-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.profile-image-container {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    border: 5px solid white;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    margin-top: 40px;
+    background-color: #f0f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #ccc;
+    font-size: 60px;
+}
+
+.profile-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.upload-form {
+    margin: 25px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.upload-form input[type="file"] {
+    margin-bottom: 15px;
+    padding: 12px;
+    border: 2px dashed #4b6cb7;
+    border-radius: 10px;
+    width: 100%;
+    max-width: 300px;
+    text-align: center;
+    background: #f8f9fa;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.upload-form input[type="file"]:hover {
+    background: #e9ecef;
+}
+
+.upload-form button {
+    background: linear-gradient(90deg, #4b6cb7 0%, #182848 100%);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 5px 15px rgba(75, 108, 183, 0.4);
+}
+
+.upload-form button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(75, 108, 183, 0.6);
+}
+
+.upload-form button i {
+    margin-right: 8px;
+}
+
+.user-details {
+    background: #f8f9fa;
+    border-radius: 15px;
+    padding: 30px;
+    width: 100%;
+    margin-top: 20px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.user-details h3 {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    color: #2d3748;
+    font-weight: 600;
+}
+
+.user-details h3 i {
+    margin-right: 15px;
+    color: #4b6cb7;
+    font-size: 20px;
+    width: 25px;
+}
+
+.divider {
+    height: 1px;
+    background: linear-gradient(to right, transparent, #c3cfe2, transparent);
+    margin: 20px 0;
+}
+
+/* Enhanced Responsive Design */
+@media (max-width: 768px) {
+    body {
+        padding: 0;
+        display: block;
+    }
+
+    .profile-container {
+        border-radius: 0;
+        min-height: 100vh;
+        padding: 30px 20px;
+        max-width: none;
+        box-shadow: none;
+    }
+
+    .profile-container::before {
+        height: 120px;
+        border-radius: 0;
+    }
+
+    h1 {
+        font-size: 24px;
+    }
+
+    .profile-image-container {
+        width: 150px;
+        height: 150px;
+    }
+
+    .user-details {
+        padding: 20px;
+    }
+
+    /* Ensure content fills available space */
+    .profile-content {
+        min-height: calc(100vh - 200px);
+        justify-content: space-around;
+    }
+}
+
+@media (max-width: 480px) {
+    .profile-container {
+        padding: 25px 15px;
+    }
+
+    .profile-container::before {
+        height: 100px;
+    }
+
+    h1 {
+        font-size: 20px;
+        margin-bottom: 30px;
+    }
+
+    h1 i {
+        font-size: 24px;
+    }
+
+    .profile-image-container {
+        width: 130px;
+        height: 130px;
+        font-size: 50px;
+    }
+
+    .upload-form input[type="file"] {
+        max-width: 100%;
+    }
+
+    .user-details h3 {
+        font-size: 16px;
+    }
+
+    .back-button {
+        top: 20px;
+        left: 20px;
+    }
+
+    /* Adjust spacing for very small screens */
+    .profile-content {
+        min-height: calc(100vh - 150px);
+    }
+
+    .upload-form {
+        margin: 15px 0;
+    }
+}
+
+/* Special UI for very small devices (max-width: 380px) */
+@media (max-width: 380px) {
+    .profile-container {
+        padding: 20px 12px;
+    }
+
+    .profile-container::before {
+        height: 90px;
+    }
+
+    h1 {
+        font-size: 18px;
+        margin: 5px 0 25px;
+    }
+
+    h1 i {
+        font-size: 20px;
+        margin-right: 10px;
+    }
+
+    .back-button {
+        top: 15px;
+        left: 15px;
+        font-size: 18px;
+    }
+
+    .alert-success {
+        padding: 10px;
+        font-size: 14px;
+        margin-bottom: 20px;
+    }
+
+    .profile-image-container {
+        width: 110px;
+        height: 110px;
+        margin-top: 20px;
+        font-size: 40px;
+        border-width: 4px;
+    }
+
+    .upload-form {
+        margin: 15px 0;
+    }
+
+    .upload-form input[type="file"] {
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    .upload-form button {
+        padding: 10px 20px;
+        font-size: 14px;
+    }
+
+    .user-details {
+        padding: 20px 15px;
+        margin-top: 15px;
+    }
+
+    .user-details h3 {
+        font-size: 14px;
+        margin-bottom: 15px;
+    }
+
+    .user-details h3 i {
+        font-size: 16px;
+        margin-right: 10px;
+        width: 20px;
+    }
+
+    .divider {
+        margin: 15px 0;
+    }
+
+    .profile-content {
+        min-height: calc(100vh - 130px);
+    }
+}

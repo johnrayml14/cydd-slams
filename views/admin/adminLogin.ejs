@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Log In - SLAMS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles/frontpage.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #4b2015, #8B0039);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex: 1;
+            padding: 20px;
+        }
+
+        .login-form {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .login-form h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 36px;
+            margin-bottom: 10px;
+            color: #FFD700;
+        }
+
+        .login-form h3 {
+            font-size: 18px;
+            margin-bottom: 30px;
+            color: #D1C4E9;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .login-form input {
+            width: 100%;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            background-color: rgba(255, 255, 255, 0.9);
+            color: #4A154B;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .login-form input:focus {
+            background-color: rgba(255, 255, 255, 1);
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+            outline: none;
+        }
+
+        .login-form input::placeholder {
+            color: #999;
+        }
+
+        .input-group .toggle-password {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #4A154B;
+            transition: color 0.3s ease;
+        }
+
+        .input-group .toggle-password:hover {
+            color: #8B0039;
+        }
+
+        .login-form button {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            background-color: #FF5722;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .login-form button:hover {
+            background-color: #E64A19;
+            transform: translateY(-2px);
+        }
+
+        .login-form button:active {
+            transform: translateY(0);
+        }
+
+        .login-form p {
+            margin-top: 20px;
+            color: #D1C4E9;
+        }
+
+        .login-form p a {
+            color: #FFD700;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .login-form p a:hover {
+            color: #FF5722;
+            text-decoration: underline;
+        }
+
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: opacity 0.3s ease;
+        }
+
+        .alert-success {
+            background-color: rgba(76, 175, 80, 0.9);
+            color: #fff;
+        }
+
+        .alert-danger {
+            background-color: rgba(244, 67, 54, 0.9);
+            color: #fff;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .login-form {
+                padding: 25px;
+                width: 90%;
+            }
+
+            .login-form h2 {
+                font-size: 28px;
+            }
+
+            .login-form h3 {
+                font-size: 16px;
+            }
+
+            .login-form button {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">
+            <a href="/admin/home" style="text-decoration: none;">
+                <img src="/images/cityYouth.jpg" alt="SLAMS Logo">
+            </a>
+        </div>
+    </header>
+    <main class="login-container">
+        <div class="login-form">
+            <h2>Admin Log In</h2>
+            <h3>Access the Admin Dashboard</h3>
+
+            <!-- Success Message -->
+            <% if (messages.success) { %>
+                <div class="alert alert-success">
+                    <%= messages.success %>
+                </div>
+            <% } %>
+
+            <!-- Error Message -->
+            <% if (messages.error) { %>
+                <div class="alert alert-danger">
+                    <%= messages.error %>
+                </div>
+            <% } %>
+
+            <!-- Validation Errors -->
+            <% if (messages.errors && messages.errors.length > 0) { %>
+                <ul class="alert alert-danger">
+                    <% messages.errors.forEach(function(error) { %>
+                        <li><%= error.msg %></li>
+                    <% }); %>
+                </ul>
+            <% } %>
+
+            <form action="/admin/login" method="POST">
+                <div class="input-group">
+                    <input type="text" name="user" placeholder="User" required value="<%= oldUser || '' %>">
+                </div>
+                <div class="input-group">
+                    <input type="password" name="password" id="password" placeholder="Password" required>
+                    <i class="toggle-password fas fa-eye" onclick="togglePassword('password')"></i>
+                </div>
+                <button type="submit">Log In</button>
+            </form>
+        </div>
+    </main>
+
+    <script>
+        function togglePassword(fieldId) {
+            const passwordField = document.getElementById(fieldId);
+            const toggleIcon = passwordField.nextElementSibling;
+
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+                toggleIcon.classList.remove("fa-eye");
+                toggleIcon.classList.add("fa-eye-slash");
+            } else {
+                passwordField.type = "password";
+                toggleIcon.classList.remove("fa-eye-slash");
+                toggleIcon.classList.add("fa-eye");
+            }
+        }
+         // Fade success alert after 1 second
+            window.addEventListener("DOMContentLoaded", () => {
+                const successAlert = document.getElementById("successAlert");
+                if (successAlert) {
+                    setTimeout(() => {
+                        successAlert.style.transition = "opacity 0.5s ease";
+                        successAlert.style.opacity = "0";
+                        setTimeout(() => successAlert.remove(), 500); // fully remove after fade
+                    }, 1000);
+                }
+            });
+    </script>
+</body>
+</html>

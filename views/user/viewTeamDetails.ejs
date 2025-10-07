@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= team.teamName %> - Team Details</title>
+    <link rel="stylesheet" href="/styles/viewTeamDetails.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap" rel="stylesheet">
+    <style>
+        
+    </style>
+</head>
+<body>
+    <main class="dashboard-container">
+        <div class="team-details-container">
+            <div class="team-header">
+                <div class="team-logo">
+                    <% if (team.teamProfile) { %>
+                        <img src="<%= team.teamProfile %>" alt="<%= team.teamName %>">
+                    <% } else { %>
+                        <i class="fas fa-users"></i>
+                    <% } %>
+                </div>
+                <div class="team-info">
+                    <h1><%= team.teamName %></h1>
+                    <div class="team-meta">
+                        <span class="meta-item">
+                            <i class="fas fa-landmark"></i> <%= team.organization %>
+                        </span>
+                        <span class="meta-item">
+                            <i class="fas fa-calendar-alt"></i> Created: <%= new Date(team.created_at).toLocaleDateString() %>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="team-content">
+                <div class="details-section">
+                    <h3 class="section-title"><i class="fas fa-info-circle"></i> Team Information</h3>
+                    
+                    <div class="detail-row">
+                        <span class="detail-label">Organization Type:</span>
+                        <span class="detail-value"><%= team.organization %></span>
+                    </div>
+                    
+                    <% if (sports) { %>
+                        <div class="detail-row">
+                            <span class="detail-label">Sports:</span>
+                            <div class="detail-value">
+                                <div class="sports-list">
+                                    <% const sportsArray = sports.split(',').map(sport => sport.trim()); %>
+                                    <% sportsArray.forEach(sport => { %>
+                                        <a href="/teams/<%= team.id %>/players?sport=<%= encodeURIComponent(sport) %>" class="sport-badge">
+                                            <i class="fas fa-running"></i> <%= sport %>
+                                        </a>
+                                    <% }); %>
+                                </div>
+                            </div>
+                        </div>
+                    <% } %>
+                    
+                    <% if (event) { %>
+                        <div class="detail-row">
+                            <span class="detail-label">Event:</span>
+                            <span class="detail-value"><strong><%= event.title %></strong></span>
+                        </div>
+                    <% } %>
+                </div>
+
+                <div class="details-section">
+                    <h3 class="section-title"><i class="fas fa-user-tie"></i> Team Coordinator</h3>
+                    <div class="coach-info">
+                        <div class="coach-avatar">
+                            <% if (team.coachProfile) { %>
+                                <img src="<%= team.coachProfile %>" alt="Coach">
+                            <% } else { %>
+                                <i class="fas fa-user"></i>
+                            <% } %>
+                        </div>
+                        <div class="coach-details">
+                            <h4><%= team.coachName || 'Not assigned' %></h4>
+                            <p><i class="fas fa-envelope"></i> <%= team.coachEmail %></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <a href="/all-teams" class="btn btn-back">
+                    <i class="fas fa-arrow-left"></i> Back
+                </a>
+            </div>
+        </div>
+    </main>
+</body>
+
+</html>

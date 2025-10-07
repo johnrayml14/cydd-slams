@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coordinator Profile - SLAMS</title>
+    <link rel="stylesheet" href="/styles/frontpage.css">
+    <link rel="stylesheet" href="/styles/coachProfile.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Base styles */
+        
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div id="mySidebar" class="sidebar">
+        <a href="/coach/homepage"><i class="fas fa-home"></i> Home</a>
+        <a href="/coach/posts"><i class="fas fa-newspaper"></i> Posts</a>
+        <a href="/coach/gallery"><i class="fas fa-image"></i> Gallery</a>
+        <a href="/coach/events"><i class="fas fa-calendar-alt"></i> Events</a>
+        <a href="javascript:void(0);" class="team-link" onclick="toggleSubSidebar()"><i class="fas fa-users-cog"></i> Team</a>
+        <div class="sub-sidebar" id="subSidebar">
+            <a href="/coach/my-team"><i class="fas fa-users"></i> My Team</a>
+            <a href="/coach/all-teams"><i class="fas fa-landmark"></i> All Teams</a>
+        </div>
+    </div>
+
+    <!-- Sidebar toggle button -->
+    <span class="sidebar-btn" onclick="toggleNav()">&#9776;</span>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">
+            <a href="/coach/homepage" style="text-decoration: none;">
+                <img src="/images/cityYouth.jpg" alt="SLAMS Logo">
+            </a>
+            <span class="slams-title">SLAMS</span>
+        </div>
+        <div class="menu-bar">
+            <div class="user-profile">
+                <% if (coach && coach.coachProfile) { %>
+                    <img src="<%= coach.coachProfile %>" alt="Profile" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #fff;">
+                <% } else { %>
+                    <i class="fas fa-user-shield"></i>
+                <% } %>
+                <div class="dropdown-content">
+                    <a href="/coach/profile">
+                        <i class="fas fa-cogs" style="margin-right: 8px;"></i> Profile
+                    </a>
+                    <a href="javascript:void(0);" class="logout-btn" onclick="showLogoutModal()">
+                        <i class="fas fa-sign-out-alt" style="margin-right: 8px;"></i> Log Out
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="main-container">
+        <div class="profile-card">
+            <button class="back-button" onclick="goBack()">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <div class="profile-header">
+                <% if (coach && coach.coachProfile) { %>
+                    <img src="<%= coach.coachProfile %>" alt="Profile Picture" class="profile-avatar" id="profileImage">
+                <% } else { %>
+                    <img src="/images/user icon.jpg" alt="Default Profile" class="profile-avatar" id="profileImage">
+                <% } %>
+                <h1 class="profile-name"><%= coach ? coach.fullname : 'User' %></h1>
+                <p class="profile-role">
+                    <i class="fas fa-user-tie"></i> Team Coordinator
+                </p>
+                
+            </div>
+
+            <div class="profile-body">
+                <% if (success && success.length > 0) { %>
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle"></i> <%= success %>
+                    </div>
+                <% } %>
+
+                <% if (error && error.length > 0) { %>
+                    <div class="alert alert-error">
+                        <i class="fas fa-exclamation-circle"></i> <%= error %>
+                    </div>
+                <% } %>
+
+                <h3 class="section-title">
+                    <i class="fas fa-camera"></i> Profile Picture
+                </h3>
+                <form action="/coach/profile" method="POST" enctype="multipart/form-data">
+                    <div class="file-upload">
+                        <label class="file-input-wrapper" id="fileDropArea">
+                            <i class="fas fa-cloud-upload-alt file-input-icon"></i>
+                            <div class="file-input-text">Drag & drop your photo here</div>
+                            <div class="file-input-hint">or click to browse files (JPG, PNG - Max 5MB)</div>
+                            <input type="file" name="profilePic" id="profilePicInput" class="file-input" accept="image/*">
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-upload"></i> Update Profile Picture
+                    </button>
+                </form>
+
+                <h3 class="section-title" style="margin-top: 2.5rem;">
+                    <i class="fas fa-user-circle"></i> Account Information
+                </h3>
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <i class="fas fa-user input-icon"></i>
+                    <input type="text" class="form-control" value="<%= coach ? coach.fullname : '' %>" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <i class="fas fa-envelope input-icon"></i>
+                    <input type="text" class="form-control" value="<%= coach ? coach.email : '' %>" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Phone Number</label>
+                    <i class="fas fa-phone input-icon"></i>
+                    <input type="text" class="form-control" value="<%= coach ? coach.phone : '' %>" readonly>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logout Modal -->
+    <div id="logoutModal" class="modal">
+        <div class="modal-content">
+            <h3>Are you sure you want to log out?</h3>
+            <button id="confirmLogout" class="confirm-btn">Yes</button>
+            <button id="cancelLogout" class="cancel-btn">No</button>
+        </div>
+    </div>
+
+    <script>
+        // Sidebar toggle
+        let isSidebarOpen = false;
+        function toggleNav() {
+            const sidebar = document.getElementById("mySidebar");
+            const sidebarBtn = document.querySelector(".sidebar-btn");
+
+            if (isSidebarOpen) {
+                sidebar.style.left = "-240px";
+                sidebarBtn.innerHTML = "&#9776;";
+            } else {
+                sidebar.style.left = "0";
+                sidebarBtn.innerHTML = "&times;";
+            }
+            isSidebarOpen = !isSidebarOpen;
+        }
+
+        // Sub-sidebar toggle
+        function toggleSubSidebar() {
+            const subSidebar = document.getElementById("subSidebar");
+            const teamLink = document.querySelector(".team-link");
+
+            if (subSidebar.style.display === "block") {
+                subSidebar.style.display = "none";
+                teamLink.classList.remove("active");
+            } else {
+                subSidebar.style.display = "block";
+                teamLink.classList.add("active");
+            }
+        }
+        function goBack() {
+            window.history.back();
+        }
+
+        // Logout modal
+        function showLogoutModal() {
+            document.getElementById('logoutModal').style.display = 'block';
+        }
+        function hideLogoutModal() {
+            document.getElementById('logoutModal').style.display = 'none';
+        }
+        document.getElementById('confirmLogout').addEventListener('click', function() {
+            window.location.href = '/coach/logout';
+        });
+        document.getElementById('cancelLogout').addEventListener('click', hideLogoutModal);
+
+        // File upload preview
+        const fileInput = document.getElementById('profilePicInput');
+        const profileImage = document.getElementById('profileImage');
+        const fileDropArea = document.getElementById('fileDropArea');
+
+        fileInput.addEventListener('change', function(e) {
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    profileImage.src = e.target.result;
+                }
+                reader.readAsDataURL(this.files[0]);
+                fileDropArea.style.borderColor = '#4A154B';
+                fileDropArea.style.backgroundColor = 'rgba(74, 21, 75, 0.05)';
+            }
+        });
+
+        // Drag and drop functionality
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            fileDropArea.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            fileDropArea.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            fileDropArea.addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight() {
+            fileDropArea.style.borderColor = '#4A154B';
+            fileDropArea.style.backgroundColor = 'rgba(74, 21, 75, 0.05)';
+        }
+
+        function unhighlight() {
+            fileDropArea.style.borderColor = '#ccc';
+            fileDropArea.style.backgroundColor = '#f8f9fa';
+        }
+
+        fileDropArea.addEventListener('drop', function(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            fileInput.files = files;
+            
+            // Trigger change event
+            const event = new Event('change');
+            fileInput.dispatchEvent(event);
+        });
+
+        // Coach profile dropdown
+        const userProfile = document.querySelector('.user-profile');
+        const dropdown = document.querySelector('.dropdown-content');
+        let hideTimeout;
+
+        if (userProfile && dropdown) {
+            userProfile.addEventListener('mouseenter', () => {
+                clearTimeout(hideTimeout);
+                dropdown.classList.add('show');
+            });
+
+            userProfile.addEventListener('mouseleave', () => {
+                hideTimeout = setTimeout(() => {
+                    dropdown.classList.remove('show');
+                }, 300);
+            });
+
+            // Keep dropdown open when hovering over it
+            dropdown.addEventListener('mouseenter', () => {
+                clearTimeout(hideTimeout);
+            });
+
+            dropdown.addEventListener('mouseleave', () => {
+                hideTimeout = setTimeout(() => {
+                    dropdown.classList.remove('show');
+                }, 300);
+            });
+        }
+    </script>
+</body>
+</html>

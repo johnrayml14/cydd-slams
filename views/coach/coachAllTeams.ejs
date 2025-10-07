@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Teams</title>
+    <link rel="stylesheet" href="/styles/frontpage.css">
+    <link rel="stylesheet" href="/styles/coachAllTeams.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+</head>
+<body>
+    <!-- Sidebar Menu -->
+    <div id="mySidebar" class="sidebar">
+        <a href="/coach/homepage"><i class="fas fa-home"></i> Home</a>
+        <a href="/coach/posts"><i class="fas fa-newspaper"></i> Posts</a>
+        <a href="/coach/gallery"><i class="fas fa-image"></i> Gallery</a>
+        <a href="/coach/events"><i class="fas fa-calendar-alt"></i> Events</a>
+        <!-- Team link with sub-sidebar -->
+        <a href="javascript:void(0);" class="team-link" onclick="toggleSubSidebar()"><i class="fas fa-users-cog"></i> Team</a>
+        <div class="sub-sidebar" id="subSidebar">
+            <a href="/coach/my-team"><i class="fas fa-users"></i> My Team</a>
+            <a href="/coach/all-teams" class="active"><i class="fas fa-landmark"></i> All Teams</a>
+        </div>
+    </div>
+
+    <!-- Sidebar toggle button -->
+    <span class="sidebar-btn" onclick="toggleNav()">&#9776;</span>
+
+    <header class="header">
+        <div class="logo">
+            <a href="/coach/homepage" style="text-decoration: none;">
+                <img src="/images/cityYouth.jpg" alt="SLAMS Logo">
+            </a>
+            <span class="slams-title">SLAMS</span>
+        </div>
+
+        <div class="menu-bar">
+            <div class="user-profile">
+                <% if (coach && coach.coachProfile) { %>
+                    <img src="<%= coach.coachProfile %>" alt="Profile" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #fff;">
+                <% } else { %>
+                    <i class="fas fa-user-shield"></i>
+                <% } %>
+            </div>
+        </div>
+    </header>
+
+    <div class="dropdown-content">
+                    <a href="/coach/profile">
+                        <i class="fas fa-cogs" style="margin-right: 8px;"></i> Profile
+                    </a>
+                    <a href="javascript:void(0);" class="logout-btn" onclick="showLogoutModal()">
+                        <i class="fas fa-sign-out-alt" style="margin-right: 8px;"></i> Log Out
+                    </a>
+                </div>
+
+    <main class="dashboard-container">
+        <div class="page-header">
+            <h1><i class="fas fa-landmark"></i>Teams</h1>
+        </div>
+
+        <% if (teams.length > 0) { %>
+            <div class="teams-list">
+                <% teams.forEach(team => { %>
+                    <div class="team-item" onclick="showTeamDetails('<%= team.team_id %>')">
+                        <% if (team.teamProfile) { %>
+                            <img src="<%= team.teamProfile %>" class="team-profile-img" alt="<%= team.teamName %>">
+                        <% } else { %>
+                            <div class="team-profile-img">
+                                <i class="fas fa-users"></i>
+                            </div>
+                        <% } %>
+                        <div class="team-info">
+                            <h3 class="team-name"><%= team.teamName %></h3>
+                            <div class="team-meta"><%= team.organization.charAt(0).toUpperCase() + team.organization.slice(1) %></div>
+                        </div>
+                        <% if (team.event_title) { %>
+                            <div class="team-event"><%= team.event_title %></div>
+                        <% } %>
+                    </div>
+                <% }); %>
+            </div>
+        <% } else { %>
+            <div class="no-teams">
+                <i class="fas fa-users-slash"></i>
+                <h3>No Teams Found</h3>
+                <p>There are currently no confirmed teams in the system.</p>
+            </div>
+        <% } %>
+
+        <!-- Team Details Modal -->
+        <div id="teamDetailsModal" class="modal">
+            <div class="modal-content">
+                <span class="close-modal" onclick="closeModal()">&times;</span>
+                <div id="teamDetailsContent">
+                    <!-- Content will be loaded here via AJAX -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal for logout confirmation -->
+    <div id="logoutModal" class="modal">
+        <div class="modal-content">
+            <h3>Are you sure you want to log out?</h3>
+            <button id="confirmLogout" class="confirm-btn">Confirm</button>
+            <button id="cancelLogout" class="cancel-btn">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        let isSidebarOpen = false;
+
+        const sidebar = document.getElementById("mySidebar");
+        const sidebarBtn = document.querySelector(".sidebar-btn");
+        const content = document.querySelector(".dashboard-container");
+
+        // Sidebar toggle
+        window.toggleNav = function () {
+            if (isSidebarOpen) {
+                sidebar.style.left = "-240px";
+                if (content) content.style.marginLeft = "0";
+                sidebarBtn.innerHTML = "&#9776;";
+            } else {
+                sidebar.style.left = "0";
+                if (content) content.style.marginLeft = "240px";
+                sidebarBtn.innerHTML = "&times;";
+            }
+            isSidebarOpen = !isSidebarOpen;
+        };
+
+        // Sub-sidebar toggle
+        const subSidebar = document.getElementById("subSidebar");
+        const teamLink = document.querySelector(".team-link");
+
+        window.toggleSubSidebar = function () {
+            if (subSidebar.style.display === "block") {
+                subSidebar.style.display = "none";
+                teamLink.classList.remove("active");
+            } else {
+                subSidebar.style.display = "block";
+                teamLink.classList.add("active");
+            }
+        };
+
+        // Logout Modal logic
+        const logoutModal = document.getElementById('logoutModal');
+        const confirmLogout = document.getElementById('confirmLogout');
+        const cancelLogout = document.getElementById('cancelLogout');
+
+        window.showLogoutModal = function () {
+            logoutModal.style.display = 'block';
+        };
+
+        function hideLogoutModal() {
+            logoutModal.style.display = 'none';
+        }
+
+        if (confirmLogout) {
+            confirmLogout.addEventListener('click', function () {
+                window.location.href = '/coach/logout';
+            });
+        }
+
+        if (cancelLogout) {
+            cancelLogout.addEventListener('click', function () {
+                hideLogoutModal();
+            });
+        }
+
+        // User profile dropdown
+        const userProfile = document.querySelector('.user-profile');
+        const dropdown = document.querySelector('.dropdown-content');
+        let hideTimeout;
+
+        userProfile.addEventListener('click', function(e) {
+            e.stopPropagation();
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        });
+
+        if (userProfile && dropdown) {
+            userProfile.addEventListener('mouseenter', () => {
+                clearTimeout(hideTimeout);
+                dropdown.classList.add('show');
+            });
+
+            userProfile.addEventListener('mouseleave', () => {
+                hideTimeout = setTimeout(() => {
+                    dropdown.classList.remove('show');
+                }, 1500);
+            });
+        }
+    });
+
+    // Team Details Modal Functions
+    function showTeamDetails(teamId) {
+        fetch(`/coach/team-details/${teamId}`)
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('teamDetailsContent').innerHTML = html;
+                document.getElementById('teamDetailsModal').style.display = 'block';
+            })
+            .catch(error => {
+                console.error('Error loading team details:', error);
+                alert('Failed to load team details');
+            });
+    }
+
+    function closeModal() {
+        document.getElementById('teamDetailsModal').style.display = 'none';
+    }
+
+    // Close modal when clicking outside of it
+    window.onclick = function(event) {
+        const modal = document.getElementById('teamDetailsModal');
+        if (event.target == modal) {
+            closeModal();
+        }
+    }
+    </script>
+</body>
+
+</html>

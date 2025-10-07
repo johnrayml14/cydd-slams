@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SLAMS Frontpage</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles/frontpage.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap" rel="stylesheet">
+
+</head>
+<body>
+    <header class="header">
+        <div class="logo">
+            <a href="/" style="text-decoration: none;">
+                <img src="/images/cityYouth.jpg" alt="SLAMS Logo">
+            </a>
+            <span class="slams-title">SLAMS</span>
+        </div>
+        <nav class="nav">
+            <a href="/login" class="login-btn">Log In</a>
+            <a href="/signup" class="signup-btn">Sign Up</a>
+        </nav>
+    </header>
+    <main class="main-content">
+        <div class="container">
+            <div class="text-content">
+                <h2><span>EVERY GAME.</span> EVERY SPORT.</h2>
+                <h1>CITY YOUTH SPORTS AND DEVELOPMENT DEPARTMENT</h1>
+                <p>
+                    Thousands of people around the world trust SLAMS to manage their tournaments, host their events, and 
+                    keep their competitive communities organized, informed, <br> and playing together. Take on the SLAMS 
+                    challenge, and game on!
+                </p>
+                <a href="/signup" class="Signup-btn">Signup</a>
+            </div>
+        </div>
+        <div class="white-section">
+    <div class="slideshow">
+        <img src="/images/una.jpg" class="slide active">
+        <img src="/images/dalawa.jpg" class="slide">
+        <img src="/images/tatlo.jpg" class="slide">
+    </div>
+</div>
+
+    </main>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let slides = document.querySelectorAll(".slide");
+            let index = 0;
+        
+            function showSlide() {
+                slides.forEach(slide => slide.classList.remove("active"));
+                slides[index].classList.add("active");
+                index = (index + 1) % slides.length;
+            }
+        
+            setInterval(showSlide, 3000); // Change image every 3 seconds
+        });
+        </script>
+
+<div class="mission-vision-container">
+    <div class="mission">
+        <h2>Our Mission</h2>
+        <p>
+            To empower the youth through inclusive sports programs that develop discipline, teamwork,
+            and leadership—helping them grow into responsible and productive members of society.
+        </p>
+    </div>
+    <div class="vision">
+        <h2>Our Vision</h2>
+        <p>
+            A united and dynamic youth community leading positive change through sports excellence
+            and civic engagement in the City.
+        </p>
+    </div>
+</div>
+
+<footer class="footer">
+    <div class="footer-container">
+        <div class="footer-logo">
+            <img src="/images/cityYouth.jpg" alt="SLAMS Logo">
+            <span>SLAMS</span>
+        </div>
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/about">About</a>
+            <a href="/contact">Contact</a>
+            <a href="/privacy">Privacy Policy</a>
+        </div>
+        <div class="footer-copy">
+            &copy; 2025 SLAMS. All rights reserved.
+        </div>
+    </div>
+</footer>
+
+</body>
+</html>

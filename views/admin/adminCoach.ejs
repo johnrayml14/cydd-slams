@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin/Coach - SLAMS</title>
+    <link rel="stylesheet" href="/styles/adminHome.css">
+    <link rel="stylesheet" href="/styles/adminDashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            color: #fff;
+            background: linear-gradient(135deg, #ffffff, #c6d6d8);
+            line-height: 1.6;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .header {
+            background-color: #8B0039;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 3px 30px;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header .logo {
+            margin-left: 20px;
+            display: flex;
+            align-items: center;
+            font-family: 'Playfair Display', serif;
+            gap: 12px;
+        }
+
+        .header .logo img {
+            width: 60px;
+            height: auto;
+            border-radius: 50%;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .user-profile {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .user-profile i {
+            font-size: 20px;
+            color: #fff;
+            transition: transform 0.3s ease;
+        }
+
+        .user-profile i:hover {
+            transform: scale(1.1);
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            height: 100%;
+            width: 240px;
+            position: fixed;
+            top: 72px;
+            left: -240px;
+            background-color: #ffffff;
+            z-index: 999;
+            padding-top: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 2px 0px 10px rgba(0, 0, 0, 0.2);
+            overflow-y: auto;
+        }
+
+        .sidebar a {
+            padding: 16px 24px;
+            text-decoration: none;
+            color: rgb(46, 0, 0);
+            font-size: 18px;
+            display: block;
+            transition: all 0.3s ease;
+            border-bottom: 1px solid #000000;
+        }
+
+        .sidebar a i {
+            margin-right: 15px;
+        }
+
+        .sidebar a:hover {
+            background-color: #a32600;
+            padding-left: 32px;
+            color: white;
+        }
+
+        .sidebar a.active {
+            background-color: #581000;
+            color: #fff;
+            padding-left: 32px;
+        }
+
+        .sidebar-btn {
+            font-size: 15px;
+            color: white;
+            background-color: #8B0039;
+            padding: 5px;
+            padding-left: 10px;
+            padding-right: 10px;
+            cursor: pointer;
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            z-index: 1001;
+            border-radius: 5px;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-btn:hover {
+            transform: scale(1.1);
+            background-color: #8B0039;
+        }
+
+        /* Team dropdown styles */
+        .team-dropdown-btn {
+            padding: 16px 24px;
+            text-decoration: none;
+            color: rgb(46, 0, 0);
+            font-size: 18px;
+            display: block;
+            cursor: pointer;
+            background-color: #ffffff;
+            border-bottom: 1px solid #000000;
+            transition: all 0.3s ease;
+        }
+
+        .team-dropdown-btn:hover {
+            background-color: #a32600;
+            padding-left: 32px;
+            color: white;
+        }
+
+        .team-dropdown-content {
+            display: none;
+            background-color: #f4f4f4;
+            padding-left: 20px;
+            border-left: 3px solid #3498db;
+        }
+
+        .team-dropdown-content a {
+            padding: 8px 15px;
+            text-decoration: none;
+            font-size: 16px;
+            color: #333;
+            display: block;
+            border-bottom: 1px solid #000000;
+        }
+
+        .team-dropdown-content a:hover {
+            background-color: #a32600;
+            color: white;
+        }
+
+        .team-dropdown-btn.active+.team-dropdown-content {
+            display: block;
+        }
+
+        /* Dropdown Content */
+        .dropdown-content {
+            position: absolute;
+            right: 0;
+            top: 40px;
+            background-color: #621616;
+            color: #fff;
+            min-width: 180px;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.5);
+            border-radius: 0;
+            padding: 15px;
+            z-index: 104;
+            border: 1px solid #ffcc00;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(-10px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .user-profile:hover .dropdown-content {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0);
+        }
+
+        .dropdown-content a {
+            padding: 10px 15px;
+            text-decoration: none;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .dropdown-content a i {
+            margin-right: 10px;
+            width: 16px;
+            text-align: center;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #9a1b1b;
+            transform: translateX(5px);
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 3000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding-top: 100px;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 0 auto;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            animation: scaleIn 0.3s ease-in-out;
+            position: relative;
+        }
+
+        @keyframes scaleIn {
+            from { transform: scale(0.9); }
+            to { transform: scale(1); }
+        }
+
+        .modal-content h3 {
+            font-size: 22px;
+            color: #333;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .confirm-btn, .cancel-btn {
+            padding: 12px 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 6px;
+            border: none;
+            transition: all 0.3s;
+            min-width: 100px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            margin: 5px;
+        }
+
+        .confirm-btn {
+            background-color: #4CAF50;
+            color: #fff;
+        }
+
+        .cancel-btn {
+            background-color: #f44336;
+            color: #fff;
+        }
+
+        .confirm-btn:hover {
+            background-color: #45a049;
+            transform: translateY(-2px);
+        }
+
+        .cancel-btn:hover {
+            background-color: #e53935;
+            transform: translateY(-2px);
+        }
+
+        /* Dashboard Container */
+        .dashboard-container {
+            padding: 20px;
+            padding-top: 90px;
+            transition: all 0.3s ease;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            margin-left: 0;
+            width: 100%;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #4b1515;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .search-box {
+            position: relative;
+            width: 300px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 15px 10px 40px;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #4b1515;
+            box-shadow: 0 0 5px rgba(74, 21, 75, 0.2);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #777;
+        }
+
+        .coach-table-container {
+            overflow-x: auto;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            background-color: #fff;
+            padding: 0;
+        }
+
+        .coach-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .coach-table th {
+            padding: 16px 12px;
+            background-color: #4b1515;
+            color: white;
+            font-weight: 500;
+            text-transform: uppercase;
+            font-size: 13px;
+            letter-spacing: 0.5px;
+        }
+
+        .coach-table td {
+            padding: 14px 12px;
+            border-bottom: 1px solid #f0f0f0;
+            vertical-align: middle;
+        }
+
+        .coach-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .coach-table tr:hover {
+            background-color: #f9f5ff;
+        }
+
+        .coach-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .coach-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #e0e0e0;
+        }
+
+        .default-avatar {
+            background-color: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #777;
+        }
+
+        .certificate-link {
+            color: #4b1515;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background-color: #f0f0f0;
+            border-radius: 6px;
+            transition: all 0.3s;
+        }
+
+        .certificate-link:hover {
+            background-color: #4A154B;
+            color: white;
+            text-decoration: none;
+        }
+
+        .no-certificate {
+            color: #999;
+            font-style: italic;
+        }
+
+        .action-form {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .btn-confirm, .btn-reject {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-confirm {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .btn-reject {
+            background-color: #F44336;
+            color: white;
+        }
+
+        .btn-confirm:hover {
+            background-color: #3d8b40;
+            transform: translateY(-1px);
+        }
+
+        .btn-reject:hover {
+            background-color: #d32f2f;
+            transform: translateY(-1px);
+        }
+
+        .no-data-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 300px;
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .no-data-message {
+            text-align: center;
+            padding: 30px;
+            color: #666;
+        }
+
+        .no-data-message i {
+            font-size: 48px;
+            color: #aaa;
+            margin-bottom: 15px;
+        }
+
+        .no-data-message h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: #4b1515;
+        }
+
+        .no-data-message p {
+            font-size: 15px;
+            color: #777;
+        }
+
+        /* Responsive Design */
+        /* Tablet: 768px - 1024px */
+        @media (max-width: 1024px) {
+            .header {
+                padding: 2px 20px;
+            }
+
+            .header .logo img {
+                margin-left: 20px;
+                width: 45px;
+            }
+
+            .sidebar {
+                top: 70px;
+                width: 200px;
+                left: -200px;
+            }
+
+            .sidebar a {
+                font-size: 16px;
+                padding: 14px 20px;
+            }
+
+            .dashboard-container {
+                padding: 15px;
+                padding-top: 80px;
+            }
+
+            .sidebar-btn {
+                left: 15px;
+                top: 15px;
+            }
+        }
+
+        /* Mobile: 350px - 767px */
+        @media (max-width: 767px) {
+            .header {
+                padding: 8px 15px;
+                height: 60px;
+            }
+
+            .logo img {
+                width: 80px;
+                margin-left: 40px;
+            }
+
+            .sidebar {
+                top: 60px;
+                width: 220px;
+                left: -220px;
+                padding-top: 10px;
+            }
+
+            .sidebar a {
+                font-size: 16px;
+                padding: 16px 20px;
+                min-height: 50px;
+            }
+
+            .sidebar a i {
+                margin-right: 12px;
+                width: 20px;
+                text-align: center;
+            }
+
+            .sidebar-btn {
+                left: 10px;
+                top: 13px;
+                font-size: 18px;
+                padding: 8px 12px;
+                min-width: 44px;
+                min-height: 44px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .dashboard-container {
+                padding: 20px;
+                padding-top: 80px;
+            }
+
+            .header-container {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .search-box {
+                width: 100%;
+            }
+
+            .coach-table th, 
+            .coach-table td {
+                padding: 12px 8px;
+            }
+
+            .action-form {
+                flex-direction: column;
+                gap: 6px;
+            }
+
+            .btn-confirm, 
+            .btn-reject {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .modal-content {
+                width: 90%;
+                max-width: 300px;
+                padding: 20px;
+            }
+
+            .confirm-btn,
+            .cancel-btn {
+                padding: 10px 15px;
+                font-size: 14px;
+                width: 100px;
+            }
+        }
+
+        /* Small mobile optimization */
+        @media (max-width: 480px) {
+            .title {
+                font-size: 20px;
+            }
+
+            .coach-info {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 6px;
+            }
+
+            .coach-avatar {
+                width: 32px;
+                height: 32px;
+            }
+
+            .confirm-btn,
+            .cancel-btn {
+                padding: 10px 12px;
+                font-size: 13px;
+                width: 90px;
+            }
+        }
+
+        /* Sidebar open state */
+        body.sidebar-open {
+            overflow: hidden;
+        }
+
+        body.sidebar-open .dashboard-container {
+            margin-left: 240px;
+            width: calc(100% - 240px);
+        }
+
+        @media (max-width: 767px) {
+            body.sidebar-open .dashboard-container {
+                margin-left: 0;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+   <!-- Sidebar Menu -->
+   <div id="mySidebar" class="sidebar">
+    <a href="/admin/home" ><i class="fas fa-home"></i> Home</a>
+    <a href="/admin/posts" ><i class="fas fa-newspaper"></i> Posts</a>
+    <a href="/admin/events"><i class="fas fa-calendar-alt"></i> Events</a>
+    <a href="/admin/coach" class="active"><i class="fas fa-chalkboard-teacher"></i> Coordinator Request</a>
+    
+    <!-- Team dropdown section -->
+    <a href="javascript:void(0);" class="team-dropdown-btn"><i class="fas fa-users-cog"></i> Teams</a>
+    <div class="team-dropdown-content">
+         <a href="/admin/team-request"><i class="fas fa-users"></i> Team Request</a>
+    <a href="/admin/registered-team"><i class="fas fa-landmark"></i> All Team</a>
+    </div>
+    <a href="/admin/users"><i class="fas fa-users"></i> Players</a>
+</div>
+
+    <!-- Sidebar toggle button -->
+    <span class="sidebar-btn" onclick="toggleNav()">&#9776;</span>
+
+    <header class="header">
+        <div class="logo">
+            <a href="/admin/home" style="text-decoration: none;">
+                <img src="/images/cityYouth.jpg" alt="SLAMS Logo">
+            </a>
+        </div>
+
+        <div class="user-profile">
+            <% if (admin && admin.profilePic) { %>
+                <img src="<%= admin.profilePic %>" 
+                    alt="Admin Profile" 
+                    style="width: 35px; height: 35px; border-radius: 50%; border: 2px solid #007bff; object-fit: cover;">
+            <% } else { %>
+                <i class="fas fa-user-shield"></i>
+            <% } %>
+
+            <div class="dropdown-content">
+                <a href="/admin/adminProfile">
+                    <i class="fas fa-cogs" style="margin-right: 8px;"></i> Admin
+                </a>
+                <a href="javascript:void(0);" class="logout-btn" onclick="showLogoutModal()">
+                    <i class="fas fa-sign-out-alt" style="margin-right: 8px;"></i> Log Out
+                </a>
+            </div>
+        </div>
+    </header>
+        <div class="dashboard-container">
+        <div class="header-container">
+            <h1 class="title"><i class="fas fa-chalkboard-teacher"></i> Coordinator Requests</h1>
+            <div class="search-box">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" id="coachSearch" class="search-input" placeholder="Search coordinators..." autocomplete="off">
+            </div>
+        </div>
+
+        <% if (coaches.length > 0) { %>
+        <div class="coach-table-container">
+            <table class="coach-table">
+                <thead>
+                    <tr>
+                        <th><i class="fas fa-user"></i> Full Name</th>
+                        <th><i class="fas fa-envelope"></i> Email</th>
+                        <th><i class="fas fa-phone-alt"></i> Phone</th>
+                        <th><i class="fas fa-file-alt"></i> Certificate</th>
+                        <th><i class="fas fa-cogs"></i> Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% coaches.forEach(coach => { %>
+                    <tr class="fade-in" data-coach-name="<%= coach.fullname.toLowerCase() %>">
+                        <td>
+                            <div class="coach-info">
+                                <% if (coach.profilePic) { %>
+                                    <img src="<%= coach.profilePic %>" class="coach-avatar" alt="<%= coach.fullname %>">
+                                <% } else { %>
+                                    <div class="coach-avatar default-avatar">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                <% } %>
+                                <span><%= coach.fullname %></span>
+                            </div>
+                        </td>
+                        <td><%= coach.email %></td>
+                        <td><%= coach.phone %></td>
+                        <td>
+                            <% if (coach.coach_certificate) { %>
+                            <a href="<%= coach.coach_certificate %>" target="_blank" class="certificate-link">
+                                <i class="fas fa-eye"></i> View Certificate
+                            </a>
+                            <% } else { %>
+                            <span class="no-certificate">No Certificate</span>
+                            <% } %>
+                        </td>
+                        <td>
+                            <form action="/admin/coach/updateStatus" method="POST" class="action-form">
+                                <input type="hidden" name="coachId" value="<%= coach.id %>">
+                                <button type="submit" name="status" value="confirmed" class="btn-confirm">
+                                    <i class="fas fa-check-circle"></i> Approve
+                                </button>
+                                <button type="submit" name="status" value="rejected" class="btn-reject">
+                                    <i class="fas fa-times-circle"></i> Reject
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        </div>
+        <% } else { %>
+        <div class="no-data-container">
+            <div class="no-data-message">
+                <i class="fas fa-user-clock"></i>
+                <h3>No Pending Requests</h3>
+                <p>There are currently no coordinator requests to review.</p>
+            </div>
+        </div>
+        <% } %>
+    </div>
+
+    <!-- Modal for logout confirmation -->
+     <div id="logoutModal" class="modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="hideLogoutModal()">&times;</button>
+            <h3>Are you sure you want to log out?</h3>
+            <div class="modal-buttons">
+                <button id="confirmLogout" class="confirm-btn">Confirm</button>
+                <button id="cancelLogout" class="cancel-btn">Cancel</button>
+            </div>
+        </div>
+
+    <script>
+       let isSidebarOpen = false; 
+
+    function toggleNav() {
+        const sidebar = document.getElementById("mySidebar");
+        const content = document.querySelector(".dashboard-container");
+        const sidebarBtn = document.querySelector(".sidebar-btn");
+
+        if (isSidebarOpen) {
+            sidebar.style.left = "-240px";  
+            document.body.classList.remove("sidebar-open");
+            sidebarBtn.innerHTML = "&#9776;";
+        } else {
+            sidebar.style.left = "0";
+            document.body.classList.add("sidebar-open");
+            sidebarBtn.innerHTML = "&#9776;";
+        }
+
+        isSidebarOpen = !isSidebarOpen;
+    }
+
+        // Toggle the team dropdown
+        const teamDropdownBtn = document.querySelector('.team-dropdown-btn');
+        const teamDropdownContent = document.querySelector('.team-dropdown-content');
+
+        teamDropdownBtn.addEventListener('click', function() {
+            // Toggle the active class on the button
+            teamDropdownBtn.classList.toggle('active');
+
+            // Show or hide the dropdown content
+            if (teamDropdownContent.style.display === "block") {
+                teamDropdownContent.style.display = "none";
+            } else {
+                teamDropdownContent.style.display = "block";
+            }
+        });
+
+
+        // Show the logout confirmation modal
+        function showLogoutModal() {
+            document.getElementById('logoutModal').style.display = 'block';
+        }
+
+        function hideLogoutModal() {
+            document.getElementById('logoutModal').style.display = 'none';
+        }
+
+        document.getElementById('confirmLogout').addEventListener('click', function() {
+            window.location.href = '/admin/logout';  
+        });
+
+        document.getElementById('cancelLogout').addEventListener('click', function() {
+            hideLogoutModal(); 
+        });
+
+        //search functionality 
+        document.getElementById('coachSearch').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const rows = document.querySelectorAll('.coach-table tbody tr');
+            
+            rows.forEach(row => {
+                const coachName = row.getAttribute('data-coach-name');
+                if (coachName.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+

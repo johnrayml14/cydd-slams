@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Event - SLAMS</title>
+    <link rel="stylesheet" href="/styles/adminHome.css">
+    <link rel="stylesheet" href="/styles/adminDashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4c1818;
+            --secondary-color: #FFFFFF;
+            --accent-color: #c83a3a;
+            --text-color: #333333;
+            --light-gray: #F5F5F5;
+            --border-radius: 10px;
+            --box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+            --hover-color: #3a1212;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-gray);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 0;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+            width: 100%;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .edit-event-form {
+            background-color: var(--secondary-color);
+            padding: 25px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            width: 100%;
+            margin: 0 auto;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .edit-event-form h2 {
+            margin-bottom: 25px;
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 16px;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .form-group input, 
+        .form-group textarea, 
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            font-size: 15px;
+            border: 1px solid #DDD;
+            border-radius: 6px;
+            transition: var(--transition);
+            background-color: var(--secondary-color);
+        }
+
+        .form-group input:focus, 
+        .form-group textarea:focus, 
+        .form-group select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+            outline: none;
+        }
+
+        .form-group input[type="file"] {
+            padding: 8px;
+            background-color: transparent;
+        }
+
+        .form-group label i {
+            margin-right: 10px;
+            color: var(--primary-color);
+        }
+
+        .sports-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+            background-color: var(--light-gray);
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .sport-option {
+            display: flex;
+            align-items: center;
+            padding: 8px;
+            background-color: var(--secondary-color);
+            border-radius: 6px;
+            transition: var(--transition);
+        }
+
+        .sport-option:hover {
+            background-color: #E6F0FA;
+        }
+
+        .sport-option input[type="checkbox"] {
+            margin-right: 1px;
+            margin-left: -50px;
+            accent-color: var(--primary-color);
+            transform: scale(1.1);
+            position: relative;
+            z-index: 1;
+            flex-shrink: 0;
+        }
+
+        .sport-option label {
+            margin-top: 10px;
+            margin-left: -50px;
+            color: var(--text-color);
+            font-weight: normal;
+            cursor: pointer;
+            flex: 1;
+            font-size: 14px;
+            line-height: 1.3;
+            display: block;
+            position: relative;
+            z-index: 1;
+            overflow: visible;
+            white-space: normal;
+            word-wrap: break-word;
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+            font-family: inherit;
+            line-height: 1.5;
+            padding: 12px;
+        }
+
+        .file-preview {
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .file-preview img {
+            max-width: 100px;
+            max-height: 100px;
+            margin-right: 15px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .file-preview a {
+            color: var(--primary-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .file-preview a:hover {
+            text-decoration: underline;
+        }
+
+        .file-preview a i {
+            margin-right: 5px;
+        }
+
+        .current-file {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+            width: 100%;
+        }
+        
+        /* Form buttons styling */
+        .form-buttons-container {
+            margin-top: auto;
+            padding-top: 30px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .form-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 24px;
+            background-color: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            width: auto;
+            min-width: 140px;
+            gap: 8px;
+        }
+
+        .back-btn:hover {
+            background-color: var(--hover-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .submit-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 24px;
+            background-color: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            width: auto;
+            min-width: 140px;
+            gap: 8px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .submit-btn:hover {
+            background-color: var(--hover-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 1024px) {
+            .sport-option input[type="checkbox"] {
+                margin-left: -50px;
+            }
+
+            .sports-container {
+                grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+                gap: 8px;
+            }
+            
+            .sport-option {
+                padding: 6px;
+                min-height: 36px;
+            }
+            
+            .sport-option label {
+                font-size: 13px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 0 15px;
+                margin: 15px auto;
+            }
+            
+            .edit-event-form {
+                padding: 20px;
+            }
+            
+            .edit-event-form h2 {
+                font-size: 1.5rem;
+            }
+            
+            .sport-option {
+                padding: 5px;
+                min-height: 32px;
+            }
+            
+            .sport-option input[type="checkbox"] {
+                margin-left: -45px;
+            }
+            
+            .sport-option label {
+                font-size: 14px;
+            }
+            
+            .sport-option input {
+                margin-right: 6px;
+                transform: scale(1);
+            }
+            
+            .form-group {
+                margin-bottom: 15px;
+            }
+            
+            .form-group label {
+                font-size: 14px;
+            }
+            
+            .form-group input, 
+            .form-group textarea, 
+            .form-group select {
+                padding: 10px;
+                font-size: 14px;
+            }
+            
+            .file-preview {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .file-preview img {
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+            
+            .back-btn, .submit-btn {
+                min-width: 120px;
+                padding: 10px 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .dashboard-container {
+                padding: 0 10px;
+                margin: 10px auto;
+            }
+            
+            .edit-event-form {
+                padding: 15px;
+            }
+            
+            .edit-event-form h2 {
+                font-size: 1.3rem;
+                margin-bottom: 15px;
+            }
+            
+            .sports-container {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            }
+            
+            .sport-option label {
+                margin-left: -40px;
+                font-size: 13px;
+            }
+            
+            .back-btn, .submit-btn {
+                padding: 10px 15px;
+                font-size: 14px;
+                min-width: 110px;
+            }
+            
+            .form-group label i {
+                margin-right: 5px;
+            }
+            
+            .form-buttons {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+
+        @media (max-width: 320px) {
+            .sports-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-buttons {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .back-btn, .submit-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="dashboard-container">
+        <div class="edit-event-form">
+            <h2>Update Event Details</h2>
+            <form action="/admin/events/update/<%= event.id %>" method="POST" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="title">
+                        <i class="fas fa-heading"></i> Event Title:
+                    </label>
+                    <input type="text" id="title" name="title" value="<%= event.title %>" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">
+                        <i class="fas fa-align-left"></i> Event Description:
+                    </label>
+                    <textarea id="description" name="description" rows="5" required><%= event.description %></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-basketball-ball"></i> Sports Included:
+                    </label>
+                    <div class="sports-container">
+                        <% 
+                        const selectedSports = event.sports.split(',');
+                        const sportsOptions = [
+                            'basketball', 'volleyball', 'soccer', 'badminton', 
+                            'sepak_takraw', 'table_tennis', 'chess', 
+                            'athletics', 'taekwondo', 'arnis', 'gymnastic'
+                        ];
+                        %>
+                        <% sportsOptions.forEach(sport => { %>
+                            <div class="sport-option">
+                                <input type="checkbox" id="<%= sport %>" name="sports[]" value="<%= sport %>" 
+                                    <%= selectedSports.includes(sport) ? 'checked' : '' %>>
+                                <label for="<%= sport %>"><%= sport.charAt(0).toUpperCase() + sport.slice(1).replace('_', ' ') %></label>
+                            </div>
+                        <% }); %>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="image">
+                        <i class="fas fa-image"></i> Event Image:
+                    </label>
+                    <input type="file" id="image" name="image" accept="image/*">
+                    <% if (event.image) { %>
+                        <div class="file-preview">
+                            <img src="/uploads/events/<%= event.image %>" alt="Current event image">
+                            <span class="current-file">Current: <%= event.image %></span>
+                        </div>
+                    <% } %>
+                </div>
+
+                <div class="form-group">
+                    <label for="date_schedule">
+                        <i class="fas fa-calendar-alt"></i> Event Date:
+                    </label>
+                    <input type="datetime-local" id="date_schedule" name="date_schedule" 
+                        value="<%= new Date(event.date_schedule).toISOString().slice(0, 16) %>" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="location">
+                        <i class="fas fa-map-marker-alt"></i> Event Location:
+                    </label>
+                    <input type="text" id="location" name="location" value="<%= event.location %>" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="appointmentForm">
+                        <i class="fas fa-file-pdf"></i> Appointment Form (PDF):
+                    </label>
+                    <input type="file" id="appointmentForm" name="appointmentForm" accept=".pdf">
+                    <% if (event.appointmentForm) { %>
+                        <div class="file-preview">
+                            <a href="/uploads/admin_appointment_form/<%= event.appointmentForm %>" target="_blank">
+                                <i class="fas fa-file-pdf"></i> View Current PDF
+                            </a>
+                            <span class="current-file">Current: <%= event.appointmentForm %></span>
+                        </div>
+                    <% } %>
+                </div>
+
+                <div class="form-group">
+                    <a href="/admin/events/<%= event.id %>" class="back-btn">
+                <i class="fas fa-arrow-left"></i> Back
+            </a>
+                    <button type="submit" class="submit-btn">
+                        <i class="fas fa-save"></i> Update Event
+                    </button>
+                    
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <script>
+        document.querySelector('form').addEventListener('submit', function(e) {
+            // Validate at least one sport is selected
+            const checkedSports = document.querySelectorAll('input[name="sports[]"]:checked');
+            if (checkedSports.length === 0) {
+                e.preventDefault();
+                alert('Please select at least one sport');
+                return false;
+            }
+            
+            // Validate PDF file if a new one is selected
+            const pdfFile = document.getElementById('appointmentForm').files[0];
+            if (pdfFile) {
+                const fileSize = pdfFile.size / 1024 / 1024; // in MB
+                if (fileSize > 10) {
+                    e.preventDefault();
+                    alert('PDF file size should not exceed 10MB');
+                    return false;
+                }
+            }
+            
+            // Show loading state
+            const submitBtn = document.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating Event...';
+        });
+
+        // Make the sports container items equal height
+        function equalizeSportsHeight() {
+            const sportsContainer = document.querySelector('.sports-container');
+            if (sportsContainer) {
+                const sportOptions = sportsContainer.querySelectorAll('.sport-option');
+                let maxHeight = 0;
+                
+                sportOptions.forEach(option => {
+                    option.style.height = 'auto';
+                });
+                
+                sportOptions.forEach(option => {
+                    if (option.offsetHeight > maxHeight) {
+                        maxHeight = option.offsetHeight;
+                    }
+                });
+                
+                sportOptions.forEach(option => {
+                    option.style.height = maxHeight + 'px';
+                });
+            }
+        }
+
+        // Run on load and resize
+        window.addEventListener('load', equalizeSportsHeight);
+        window.addEventListener('resize', equalizeSportsHeight);
+    </script>
+</body>
+</html>

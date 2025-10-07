@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - SLAMS (Coordinator)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles/frontpage.css"> 
+    <link rel="stylesheet" href="/styles/signup.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+
+        .signup-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex: 1;
+            padding: 20px;
+        }
+
+        .signup-form {
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 450px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .signup-form h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 36px;
+            margin-bottom: 20px;
+            color: #FFD700;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .signup-form input {
+            width: 100%;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            background-color: rgba(255, 255, 255, 0.9);
+            color: #4A154B;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .signup-form input:focus {
+            background-color: rgba(255, 255, 255, 1);
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+            outline: none;
+        }
+
+        .signup-form input::placeholder {
+            color: #999;
+        }
+
+        .input-group .toggle-password {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #4A154B;
+            transition: color 0.3s ease;
+        }
+
+        .input-group .toggle-password:hover {
+            color: #8B0039;
+        }
+
+        .signup-form button {
+            width: 90%;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            background-color: #FF5722;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .signup-form button:hover {
+            background-color: #E64A19;
+            transform: translateY(-2px);
+        }
+
+        .signup-form button:active {
+            transform: translateY(0);
+        }
+
+        .signup-form p {
+            margin-top: 20px;
+            color: #D1C4E9;
+        }
+
+        .signup-form p a {
+            color: #FFD700;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .signup-form p a:hover {
+            color: #FF5722;
+            text-decoration: underline;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 480px) {
+            .signup-form {
+                padding: 20px;
+            }
+
+            .signup-form h2 {
+                font-size: 28px;
+            }
+
+            .signup-form input {
+                font-size: 14px;
+            }
+
+            .signup-form button {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">
+            <a href="/" style="text-decoration: none;">
+                <img src="/images/cityYouth.jpg" alt="SLAMS Logo">
+            </a>
+            <span class="slams-title">SLAMS</span>
+        </div>
+    </header>
+
+    <main class="signup-container">
+        <div class="signup-form">
+            <h2>Coordinator Sign Up</h2>
+
+            <% if (messages.success) { %>
+                <div class="alert alert-success">
+                    <%= messages.success %>
+                </div>
+            <% } %>
+
+            <% if (messages.error) { %>
+                <div class="alert alert-danger">
+                    <%= messages.error %>
+                </div>
+            <% } %>
+
+            <% if (messages.errors) { %>
+                <ul class="alert alert-danger">
+                    <% messages.errors.forEach(function(error) { %>
+                        <li><%= error.msg %></li>
+                    <% }) %>
+                </ul>
+            <% } %>
+
+            <form action="/coach/signup" method="POST" enctype="multipart/form-data">
+                <div class="input-group">
+                    <input type="text" name="fullname" placeholder="Full Name" value="<%= old.fullname %>" required>
+                </div>
+                <div class="input-group">
+                    <input type="email" name="email" placeholder="Email" value="<%= old.email %>" required>
+                </div>
+                <div class="input-group">
+                    <input type="text" name="phone" placeholder="Phone #" value="<%= old.phone %>" required>
+                </div>
+                <div class="input-group">
+                    <input type="password" name="password" id="password" placeholder="Password" required>
+                    <i class="toggle-password fas fa-eye" onclick="togglePassword('password')"></i>
+                </div>
+                <div class="input-group">
+                    <input type="password" name="confirm_password" id="confirm_password" placeholder="Confirm Password" required>
+                    <i class="toggle-password fas fa-eye" onclick="togglePassword('confirm_password')"></i>
+                </div>
+
+                <!-- Added Label for Coach Certificate -->
+                <div class="input-group">
+                    <label for="coach_certificate" style="display: block; color: #FFD700; text-align: left; margin-bottom: 5px;">Coordinator Certificate</label>
+                    <input type="file" name="coach_certificate" id="coach_certificate" accept=".jpg, .jpeg, .png, .pdf" required>
+                </div>
+
+                <button type="submit">Sign Up</button>
+            </form>
+            <p>Already have an account? <a href="/coach/login">Log in</a></p>
+            <p>Sign up as <a href="/signup">User</a></p>
+        </div>
+    </main>
+
+    <script>
+        function togglePassword(fieldId) {
+            const passwordField = document.getElementById(fieldId);
+            const toggleIcon = passwordField.nextElementSibling;
+
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+                toggleIcon.classList.remove("fa-eye");
+                toggleIcon.classList.add("fa-eye-slash");
+            } else {
+                passwordField.type = "password";
+                toggleIcon.classList.remove("fa-eye-slash");
+                toggleIcon.classList.add("fa-eye");
+            }
+        }
+    </script>
+</body>
+</html>

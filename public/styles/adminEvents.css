@@ -1,0 +1,239 @@
+/* Main Layout Styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f7fa;
+    color: #333;
+    line-height: 1.6;
+}
+
+/* Page Title */
+.page-title {
+    font-size: 1.8em;
+    margin-top: -50px;
+    margin-bottom: 25px;
+    margin-left: 200px;
+    color: #4b1515;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+}
+
+.page-title i {
+    margin-right: 12px;
+}
+
+/* Event List Styles */
+.events-list {
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0;
+    list-style: none;
+}
+
+.event-item {
+    background-color: #ffffff;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
+    border-left: 4px solid #4A154B;
+}
+
+.event-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.12);
+}
+
+.event-link {
+    display: flex;
+    text-decoration: none;
+    color: inherit;
+}
+
+.event-image {
+    width: 200px;
+    height: 150px;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.event-details {
+    padding: 20px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.event-header {
+    margin-bottom: 12px;
+}
+
+.event-title {
+    font-size: 1.3em;
+    font-weight: 600;
+    color: #4b1515;
+    margin: 0 0 8px 0;
+}
+
+.event-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 8px;
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    font-size: 0.95em;
+    color: #555555;
+}
+
+.meta-icon {
+    margin-right: 8px;
+    color: #9c4d4d;
+    width: 16px;
+    text-align: center;
+}
+
+.event-description {
+    color: #666;
+    font-size: 0.95em;
+    margin: 8px 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.event-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 12px;
+}
+
+.event-date {
+    font-size: 0.9em;
+    color: #7f8c8d;
+    font-weight: 500;
+}
+
+.view-btn {
+    padding: 6px 12px;
+    background-color: #4b1515;
+    color: white;
+    border-radius: 4px;
+    font-size: 0.9em;
+    transition: background-color 0.3s;
+}
+
+.view-btn:hover {
+    background-color: #9c4d4d;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    border-left: 4px solid #4b1515;
+}
+
+.empty-icon {
+    font-size: 3em;
+    color: #bdc3c7;
+    margin-bottom: 20px;
+}
+
+.empty-text {
+    color: #7f8c8d;
+    font-size: 1.1em;
+}
+
+/* Create Event Button */
+.create-event-btn {
+    position: fixed;
+    bottom: 30px;
+    right: 60px;
+    background-color: #4b1515;
+    color: white;
+    padding: 12px 24px;
+    font-size: 16px;
+    border-radius: 30px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    z-index: 102;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+}
+
+.create-event-btn i {
+    margin-right: 10px;
+    font-size: 18px;
+}
+
+.create-event-btn:hover {
+    background-color: #9c4d4d;
+    transform: translateY(-5px);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .page-title {
+        font-size: 1.7em;
+        margin-left: 10px;
+    }
+
+    .event-link {
+        flex-direction: column;
+    }
+
+    .event-image {
+        width: 100%;
+        height: 180px;
+    }
+
+    .event-details {
+        padding: 15px;
+    }
+
+    .event-meta {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .create-event-btn {
+        right: 20px;
+        bottom: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .event-title {
+        font-size: 1.1em;
+    }
+
+    .meta-item {
+        font-size: 0.85em;
+    }
+
+    .event-description {
+        font-size: 0.85em;
+    }
+
+    .create-event-btn {
+        right: 10px;
+        bottom: 15px;
+        padding: 10px 15px;
+        font-size: 14px;
+    }
+}

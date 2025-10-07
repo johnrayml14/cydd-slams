@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery - SLAMS</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Orbitron:wght@500&display=swap">
+    <link rel="stylesheet" href="/styles/frontpage.css">
+    <link rel="stylesheet" href="/styles/userGallery.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap" rel="stylesheet">
+<style>
+    
+</style>
+</head>
+<body>
+
+    <!-- Sidebar Menu -->
+    <div id="mySidebar" class="sidebar">
+        <a href="/homepage"><i class="fas fa-home"></i> Home</a>
+        <a href="/posts"><i class="fas fa-newspaper"></i> Posts</a>
+        <a href="/gallery" class="active"><i class="fas fa-images"></i> Gallery</a>
+        <a href="/events"><i class="fas fa-calendar-alt"></i> Events</a>
+        <!-- Team link with sub-sidebar -->
+        <a href="javascript:void(0);" class="team-link" onclick="toggleSubSidebar()"><i class="fas fa-users-cog"></i> Teams</a>
+        <div class="sub-sidebar" id="subSidebar">
+            <a href="/my-team"><i class="fas fa-user"></i> My Team</a>
+            <a href="/join-team"><i class="fas fa-user-plus"></i> Join Team</a>
+            <a href="/all-teams"><i class="fas fa-users"></i> All Teams</a>
+        </div>
+        
+    </div>
+
+    <!-- Sidebar toggle button -->
+    <span class="sidebar-btn" onclick="toggleNav()">&#9776;</span>
+
+    <header class="header">
+        <div class="logo">
+            <a href="/homepage" style="text-decoration: none;">
+                <img src="/images/cityYouth.jpg" alt="SLAMS Logo">
+            </a>
+            <span class="slams-title">SLAMS</span>
+        </div>
+
+        <div class="user-profile">
+            <% if (user) { %>
+                <% if (user.profile) { %>
+                    <img src="<%= user.profile %>" alt="Profile" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #fff;">
+                <% } else { %>
+                    <i class="fas fa-user-shield" style="font-size: 24px;"></i>
+                <% } %>
+            <% } else { %>
+                <i class="fas fa-user-shield" style="font-size: 24px;"></i>
+            <% } %>
+    </div>
+    </header>
+    
+    <div class="dropdown-content">
+            <a href="/profile">
+                <i class="fas fa-cogs" style="margin-right: 8px;"></i> Profile
+            </a>
+            <a href="javascript:void(0);" class="logout-btn" onclick="showLogoutModal()">
+                <i class="fas fa-sign-out-alt" style="margin-right: 8px;"></i> Log Out
+            </a>
+        </div>
+
+    <main class="dashboard-container">
+        <div class="gallery-container">
+            <div class="gallery-header">
+                <h1>SLAMS GALLERY</h1>
+                <p>Relive the best moments from our events</p>
+            </div>
+            
+            <!-- Recent media (last 10 days) -->
+            <div class="gallery-grid" id="recent-media-grid">
+                <% if (recentMediaItems && recentMediaItems.length > 0) { %>
+                    <% recentMediaItems.forEach((item, index) => { %>
+                        <div class="gallery-item" onclick="openLightbox(<%= index %>, 'recent')">
+                            <% if (item.type === 'image') { %>
+                                <img data-src="<%= item.url %>" 
+                                    alt="Gallery image from post <%= item.postId %>" 
+                                    class="gallery-media"
+                                    data-filename="<%= item.filename %>"
+                                    onerror="handleImageError(this)">
+                                <span class="media-type">IMAGE</span>
+                            <% } else { %>
+                                <video controls class="gallery-video"
+                                    data-filename="<%= item.filename %>">
+                                    <source src="<%= item.url %>" type="video/mp4">
+                                    Your browser does not support the video tag.
+                                </video>
+                                <span class="media-type">VIDEO</span>
+                            <% } %>
+                            <div class="media-date" style="position: absolute; bottom: 5px; left: 5px; background-color: rgba(0,0,0,0.7); color: white; padding: 2px 5px; border-radius: 3px; font-size: 10px;">
+                                <%= new Date(item.createdAt).toLocaleDateString() %>
+                            </div>
+                        </div>
+                    <% }); %>
+                <% } else { %>
+                    <div class="no-media">
+                        <p>No recent media found in the gallery.</p>
+                    </div>
+                <% } %>
+            </div>
+
+            <!-- Older media (hidden by default) -->
+            <div class="gallery-grid" id="older-media-grid" style="display: none;">
+                <% if (olderMediaItems && olderMediaItems.length > 0) { %>
+                    <% olderMediaItems.forEach((item, index) => { %>
+                        <div class="gallery-item" onclick="openLightbox(<%= index %>, 'older')">
+                            <% if (item.type === 'image') { %>
+                                <img data-src="<%= item.url %>" 
+                                    alt="Gallery image from post <%= item.postId %>" 
+                                    class="gallery-media"
+                                    data-filename="<%= item.filename %>"
+                                    onerror="handleImageError(this)">
+                                <span class="media-type">IMAGE</span>
+                            <% } else { %>
+                                <video controls class="gallery-video"
+                                    data-filename="<%= item.filename %>">
+                                    <source src="<%= item.url %>" type="video/mp4">
+                                    Your browser does not support the video tag.
+                                </video>
+                                <span class="media-type">VIDEO</span>
+                            <% } %>
+                            <div class="media-date" style="position: absolute; bottom: 5px; left: 5px; background-color: rgba(0,0,0,0.7); color: white; padding: 2px 5px; border-radius: 3px; font-size: 10px;">
+                                <%= new Date(item.createdAt).toLocaleDateString() %>
+                            </div>
+                        </div>
+                    <% }); %>
+                <% } %>
+            </div>
+
+            <!-- Show Older Media Button -->
+            <% if (olderMediaItems && olderMediaItems.length > 0) { %>
+                <button id="loadOlderBtn" class="load-more-btn">Show Older Media</button>
+            <% } %>
+        </div>
+    </main>
+
+    <!-- Lightbox Container -->
+    <div id="lightbox" class="lightbox" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background-color: rgba(0, 0, 0, 0.9); z-index: 1000; justify-content: center; align-items: center;">
+        <span class="lightbox-close" onclick="closeLightbox()" 
+            style="position: absolute; top: 20px; right: 30px; font-size: 30px; color: white; cursor: pointer;">&times;</span>
+        <span class="lightbox-nav lightbox-prev" onclick="changeSlide(-1)" 
+            style="position: absolute; left: 20px; top: 50%; transform: translateY(-50%); font-size: 30px; color: white; cursor: pointer;">&#10094;</span>
+        <span class="lightbox-nav lightbox-next" onclick="changeSlide(1)" 
+            style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%); font-size: 30px; color: white; cursor: pointer;">&#10095;</span>
+
+        <div id="lightbox-content" style="max-width: 90%; max-height: 90%; text-align: center;">
+            <!-- Dynamic content will be inserted here -->
+        </div>
+        <div id="lightbox-caption" style="color: white; margin-top: 10px; text-align: center;"></div>
+    </div>
+
+
+    <!-- Modal for logout confirmation -->
+    <div id="logoutModal" class="modal">
+        <div class="modal-content">
+            <h3>Are you sure you want to log out?</h3>
+            <button id="confirmLogout" class="confirm-btn">Confirm</button>
+            <button id="cancelLogout" class="cancel-btn">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        let isSidebarOpen = false;
+
+        function toggleNav() {
+            const sidebar = document.getElementById("mySidebar");
+            const content = document.querySelector(".dashboard-container");
+            const sidebarBtn = document.querySelector(".sidebar-btn");
+
+            if (isSidebarOpen) {
+                sidebar.style.left = "-240px";  
+                content.style.marginLeft = "0"; 
+                sidebarBtn.innerHTML = "&#9776;"; 
+            } else {
+                sidebar.style.left = "0";  
+                content.style.marginLeft = "0";  
+                sidebarBtn.innerHTML = "&#9776;"; 
+            }
+            isSidebarOpen = !isSidebarOpen;  
+        }
+
+        // Toggle the sub-sidebar under "Team"
+        function toggleSubSidebar() {
+            const subSidebar = document.getElementById("subSidebar");
+            const teamLink = document.querySelector(".team-link");
+
+            if (subSidebar.style.display === "block") {
+                subSidebar.style.display = "none";
+                teamLink.classList.remove("active");
+            } else {
+                subSidebar.style.display = "block";
+                teamLink.classList.add("active");
+            }
+        }
+
+        // Show the logout confirmation modal
+        function showLogoutModal() {
+            document.getElementById('logoutModal').style.display = 'block';
+        }
+
+        function hideLogoutModal() {
+            document.getElementById('logoutModal').style.display = 'none';
+        }
+
+        document.getElementById('confirmLogout').addEventListener('click', function() {
+            window.location.href = '/logout';  
+        });
+
+        document.getElementById('cancelLogout').addEventListener('click', function() {
+            hideLogoutModal(); 
+        });
+
+        // User profile dropdown functionality
+        const userProfile = document.querySelector('.user-profile');
+        const dropdown = document.querySelector('.dropdown-content');
+        let hideTimeout;
+
+        // Touch support for dropdown on mobile
+        userProfile.addEventListener('click', (e) => {
+            if (window.innerWidth <= 767) {
+                e.stopPropagation();
+                dropdown.classList.toggle('show');
+            }
+        });
+        
+        // Close dropdown when tapping outside on mobile
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth <= 767 && 
+                !userProfile.contains(e.target) && 
+                dropdown.classList.contains('show')) {
+                dropdown.classList.remove('show');
+            }
+        });
+        
+        // Notification dropdown functionality
+        function toggleNotificationForm() {
+            const dropdown = document.getElementById('notificationDropdown');
+            dropdown.style.display = (dropdown.style.display === 'block') ? 'none' : 'block';
+        }
+
+        // Close notification dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            const dropdown = document.getElementById('notificationDropdown');
+            const bellWrapper = document.querySelector('.notification-wrapper');
+            if (dropdown && !bellWrapper.contains(e.target)) {
+                dropdown.style.display = "none";
+            }
+        });
+
+        // Lazy loading for images
+        document.addEventListener('DOMContentLoaded', function() {
+            const lazyImages = [].slice.call(document.querySelectorAll('img.gallery-media'));
+            
+            if ('IntersectionObserver' in window) {
+                let lazyImageObserver = new IntersectionObserver(function(entries, observer) {
+                    entries.forEach(function(entry) {
+                        if (entry.isIntersecting) {
+                            let lazyImage = entry.target;
+                            lazyImage.src = lazyImage.dataset.src;
+                            lazyImageObserver.unobserve(lazyImage);
+                        }
+                    });
+                });
+
+                lazyImages.forEach(function(lazyImage) {
+                    lazyImageObserver.observe(lazyImage);
+                });
+            }
+
+            // Toggle older media visibility
+            const loadOlderBtn = document.getElementById('loadOlderBtn');
+            if (loadOlderBtn) {
+                loadOlderBtn.addEventListener('click', function() {
+                    const olderMediaGrid = document.getElementById('older-media-grid');
+                    if (olderMediaGrid.style.display === 'none') {
+                        olderMediaGrid.style.display = 'grid';
+                        loadOlderBtn.textContent = 'Hide Older Media';
+                    } else {
+                        olderMediaGrid.style.display = 'none';
+                        loadOlderBtn.textContent = 'Show Older Media';
+                    }
+                });
+            }
+        });
+
+        // Lightbox functionality
+        let currentSlideIndex = 0;
+        let currentMediaType = 'recent';
+        const recentMediaItems = <%- JSON.stringify(recentMediaItems || []) %>;
+        const olderMediaItems = <%- JSON.stringify(olderMediaItems || []) %>;
+
+        function openLightbox(index, type) {
+            currentSlideIndex = index;
+            currentMediaType = type;
+            updateLightboxContent();
+            document.getElementById('lightbox').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox() {
+            document.getElementById('lightbox').style.display = 'none';
+            document.body.style.overflow = '';
+        }
+
+        function changeSlide(direction) {
+            currentSlideIndex += direction;
+            const items = currentMediaType === 'recent' ? recentMediaItems : olderMediaItems;
+            
+            if (currentSlideIndex >= items.length) currentSlideIndex = 0;
+            if (currentSlideIndex < 0) currentSlideIndex = items.length - 1;
+            
+            updateLightboxContent();
+        }
+
+        function updateLightboxContent() {
+            const items = currentMediaType === 'recent' ? recentMediaItems : olderMediaItems;
+            const item = items[currentSlideIndex];
+            const container = document.getElementById('lightbox-content');
+            const caption = document.getElementById('lightbox-caption');
+            container.innerHTML = '';
+
+            if (item.type === 'image') {
+                const img = document.createElement('img');
+                img.src = item.url;
+                img.alt = item.filename || '';
+                img.style.maxWidth = '100%';
+                img.style.maxHeight = '80vh';
+                container.appendChild(img);
+            } else if (item.type === 'video') {
+                const video = document.createElement('video');
+                video.src = item.url;
+                video.controls = true;
+                video.autoplay = true;
+                video.style.maxWidth = '100%';
+                video.style.maxHeight = '80vh';
+                container.appendChild(video);
+            }
+
+            caption.textContent = `Uploaded: ${new Date(item.createdAt).toLocaleDateString()}`;
+        }
+
+        // Keyboard support
+        document.addEventListener('keydown', function(e) {
+            const lightbox = document.getElementById('lightbox');
+            if (lightbox.style.display === 'flex') {
+                if (e.key === 'Escape') closeLightbox();
+                if (e.key === 'ArrowLeft') changeSlide(-1);
+                if (e.key === 'ArrowRight') changeSlide(1);
+            }
+        });
+
+        // Optional: click outside content to close
+        document.getElementById('lightbox').addEventListener('click', function(e) {
+            if (e.target === this) closeLightbox();
+        });
+
+        function handleImageError(img) {
+            img.onerror = null;
+            img.src = '/images/image-not-found.jpg';
+            return true;
+        }
+    </script>
+</body>
+</html>

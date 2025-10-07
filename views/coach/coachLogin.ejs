@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - SLAMS (Coordinator)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles/frontpage.css"> 
+    <link rel="stylesheet" href="/styles/login.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Apply login design from login.ejs */
+     .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex: 1;
+            padding: 20px;
+        }
+
+        .login-form {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 450px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .login-form h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 36px;
+            margin-bottom: 10px;
+            color: #FFD700;
+        }
+
+        .login-form h3 {
+            font-size: 18px;
+            margin-bottom: 30px;
+            color: #D1C4E9;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .login-form input {
+            width: 100%;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            background-color: rgba(255, 255, 255, 0.9);
+            color: #4A154B;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .login-form input:focus {
+            background-color: rgba(255, 255, 255, 1);
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+            outline: none;
+        }
+
+        .login-form input::placeholder {
+            color: #999;
+        }
+
+        .input-group .toggle-password {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #4A154B;
+            transition: color 0.3s ease;
+        }
+
+        .input-group .toggle-password:hover {
+            color: #8B0039;
+        }
+
+        .login-form button {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            background-color: #FF5722;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .login-form button:hover {
+            background-color: #E64A19;
+            transform: translateY(-2px);
+        }
+
+        .login-form button:active {
+            transform: translateY(0);
+        }
+
+        .login-form p {
+            margin-top: 20px;
+            color: #D1C4E9;
+        }
+
+        .login-form p a {
+            color: #FFD700;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .login-form p a:hover {
+            color: #FF5722;
+            text-decoration: underline;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .login-form {
+                padding: 25px;
+                width: 90%;
+            }
+
+            .login-form h2 {
+                font-size: 28px;
+            }
+
+            .login-form h3 {
+                font-size: 16px;
+            }
+
+            .login-form button {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">
+            <a href="/" style="text-decoration: none;">
+                <img src="/images/cityYouth.jpg" alt="SLAMS Logo">
+            </a>
+            <span class="slams-title">SLAMS</span>
+        </div>
+    </header>
+
+    <main class="login-container">
+        <div class="login-form">
+            <h2>Coordinator Login</h2>
+
+            <!-- Success Message -->
+            <% if (messages.success) { %>
+                <div class="alert alert-success">
+                    <%= messages.success %>
+                </div>
+            <% } %>
+
+            <!-- Error Message -->
+            <% if (messages.error) { %>
+                <div class="alert alert-danger">
+                    <%= messages.error %>
+                </div>
+            <% } %>
+
+            <form action="/coach/login" method="POST">
+                <div class="input-group">
+                    <input type="email" name="email" placeholder="Email" value="<%= old.email %>" required>
+                </div>
+                <div class="input-group">
+                    <input type="password" name="password" id="password" placeholder="Password" required>
+                    <i class="toggle-password fas fa-eye" onclick="togglePassword('password')"></i>
+                </div>
+
+                <button type="submit">Login</button>
+            </form>
+            <p>Don't have an account? <a href="/coach/signup">Sign up</a></p>
+            <p>Login as <a href="/login">User</a></p>
+        </div>
+    </main>
+
+    <script>
+        function togglePassword(fieldId) {
+            const passwordField = document.getElementById(fieldId);
+            const toggleIcon = passwordField.nextElementSibling;
+
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+                toggleIcon.classList.remove("fa-eye");
+                toggleIcon.classList.add("fa-eye-slash");
+            } else {
+                passwordField.type = "password";
+                toggleIcon.classList.remove("fa-eye-slash");
+                toggleIcon.classList.add("fa-eye");
+            }
+        }
+    </script>
+</body>
+</html>

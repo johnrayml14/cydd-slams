@@ -1,0 +1,342 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+.logo img {
+    width: 120px;
+    transition: transform 0.3s ease;
+    margin-left: 30px;
+}
+
+.logo img:hover {
+    transform: scale(1.1);
+}
+
+.user-profile i {
+    font-size: 20px;
+    color: #fff;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.user-profile i:hover {
+    transform: scale(1.1);
+}
+
+.sidebar {
+    height: 100%;
+    width: 240px;
+    position: fixed;
+    top: 0;
+    left: -240px;
+    background-color: #4A154B;
+    z-index: 100;
+    padding-top: 60px;
+    transition: all 0.3s ease;
+    border-radius: 0 10px 10px 0;
+    box-shadow: 2px 0px 10px rgba(0, 0, 0, 0.2);
+}
+
+.sidebar a {
+    padding: 16px 24px;
+    text-decoration: none;
+    color: white;
+    font-size: 18px;
+    display: block;
+    transition: all 0.3s ease;
+    border-bottom: 1px solid #734084;
+}
+
+.sidebar a i {
+    margin-right: 15px;
+}
+
+.sidebar a:hover {
+    background-color: #6A1B9A;
+    padding-left: 32px;
+}
+
+.sidebar a.active {
+    background-color: #9C4D9A;
+    color: #fff;
+    padding-left: 32px;
+}
+
+.sidebar-btn {
+    font-size: 15px;
+    color: white;
+    background-color: #8B0039;
+    padding: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    cursor: pointer;
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 101;
+    border-radius: 5px;
+    transition: transform 0.3s ease;
+}
+
+.sidebar-btn:hover {
+    transform: scale(1.1);
+    background-color: #8B0039;
+}
+
+.dashboard-container {
+    padding: 20px;
+    padding-left: 150px;
+    transition: padding-left 0.3s ease;
+}
+
+.dropdown-content {
+    position: absolute;
+    right: 0;
+    background-color: #4A154B;
+    color: #fff;
+    min-width: 180px;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    top: 50px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease;
+    padding-left: 2px;
+    padding-right: 15px;
+    z-index: 104;
+}
+
+.user-profile:hover .dropdown-content {
+    visibility: visible;
+    opacity: 1;
+}
+
+.dropdown-content a {
+    padding: 10px 20px;
+    text-decoration: none;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    font-size: 12px;
+    border-bottom: 1px solid #734084;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+}
+
+.dropdown-content a:hover {
+    background-color: #6A1B9A;
+    transform: translateX(5px);
+}
+
+.logout-btn {
+    background-color: rgb(236, 26, 26);
+    padding: 5px 15px;
+    margin-left: 5px;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    margin-top: 8px;
+    transition: background-color 0.3s ease;
+}
+
+.logout-btn:hover {
+    background-color: #E64A19;
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 180px;
+    }
+
+    .sidebar-btn {
+        font-size: 28px;
+    }
+
+    .dashboard-container {
+        margin-left: 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .sidebar {
+        width: 150px;
+    }
+
+    .sidebar-btn {
+        font-size: 25px;
+    }
+
+    .dashboard-container {
+        margin-left: 0;
+    }
+}
+
+/* Improved Logout Modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 3000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding-top: 100px;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: 0 auto;
+    padding: 30px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    animation: scaleIn 0.3s ease-in-out;
+    position: relative;
+}
+
+@keyframes scaleIn {
+    from {
+        transform: scale(0.9);
+    }
+
+    to {
+        transform: scale(1);
+    }
+}
+
+.modal-content h3 {
+    font-size: 22px;
+    color: #333;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.confirm-btn,
+.cancel-btn {
+    padding: 12px 25px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 6px;
+    border: none;
+    transition: all 0.3s;
+    min-width: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.confirm-btn {
+    background-color: #4CAF50;
+    color: #fff;
+}
+
+.cancel-btn {
+    background-color: #f44336;
+    color: #fff;
+}
+
+.confirm-btn:hover {
+    background-color: #45a049;
+    transform: translateY(-2px);
+}
+
+.cancel-btn:hover {
+    background-color: #e53935;
+    transform: translateY(-2px);
+}
+
+.close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 24px;
+    color: #999;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.close-btn:hover {
+    color: #333;
+}
+
+/* Team dropdown styles */
+.team-dropdown-btn {
+    padding: 16px 24px;
+    text-decoration: none;
+    color: white;
+    font-size: 18px;
+    display: block;
+    cursor: pointer;
+    background-color: #4A154B;
+    border-bottom: 1px solid #734084;
+    transition: all 0.3s ease;
+}
+
+.team-dropdown-btn:hover {
+    background-color: #6A1B9A;
+    padding-left: 32px;
+}
+
+.team-dropdown-content {
+    display: none;
+    /* Hidden by default */
+    background-color: #4A154B;
+    padding-left: 10px;
+}
+
+.team-dropdown-content a {
+    padding: 16px 24px;
+    text-decoration: none;
+    color: white;
+    font-size: 18px;
+    display: block;
+    transition: all 0.3s ease;
+    border-bottom: 1px solid #734084;
+}
+
+.team-dropdown-content a:hover {
+    background-color: #6A1B9A;
+    padding-left: 32px;
+}
+
+.team-dropdown-btn.active+.team-dropdown-content {
+    display: block;
+    /* Show the dropdown content when the button is active */
+}
+
+.sidebar a.active {
+    background-color: #9C4D9A;
+    padding-left: 32px;
+}

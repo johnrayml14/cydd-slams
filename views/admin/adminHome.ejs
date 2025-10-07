@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Home - SLAMS</title>
+    <link rel="stylesheet" href="/styles/adminHome.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap" rel="stylesheet">
+<style>
+    /* Additional styles if needed */
+</style>
+</head>
+<body>
+    <!-- Sidebar Menu -->
+    <div id="mySidebar" class="sidebar">
+        <a href="/admin/home" class="active"><i class="fas fa-home"></i> Home</a>
+        <a href="/admin/posts" ><i class="fas fa-newspaper"></i> Posts</a>
+        <a href="/admin/events"><i class="fas fa-calendar-alt"></i> Events</a>
+        <a href="/admin/coach"><i class="fas fa-chalkboard-teacher"></i> Coordinator Request</a>
+        <!-- Team dropdown section -->
+        <a href="javascript:void(0);" class="team-dropdown-btn"><i class="fas fa-users-cog"></i> Teams</a>
+        <div class="team-dropdown-content">
+            <a href="/admin/team-request"><i class="fas fa-users"></i> Team Request</a>
+            <a href="/admin/registered-team"><i class="fas fa-landmark"></i> All Team</a>
+        </div>
+        <a href="/admin/users"><i class="fas fa-users"></i> Players</a>
+    </div>
+    <!-- Sidebar toggle button -->
+    <span class="sidebar-btn" onclick="toggleNav()">&#9776;</span>
+    
+    <header class="header" style="display: flex; justify-content: space-between; align-items: center;">
+        <div class="logo">
+            <a href="/admin/home" style="text-decoration: none;">
+                <img src="/images/cityYouth.jpg" alt="SLAMS Logo">
+            </a>
+            <span class="slams-title">SLAMS</span>
+        </div>
+        <!-- Container for bell and user profile -->
+        <div style="display: flex; align-items: center; gap: 20px;">
+            <!-- Notification Bell -->
+            <div style="position: relative;">
+                <a href="javascript:void(0);" onclick="toggleNotificationForm()" style="color: white; position: relative;">
+                    <i class="fas fa-bell" style="font-size: 22px;"></i>
+                    <% if ((newCoachRequests && newCoachRequests.length > 0) || (newTeamRequests && newTeamRequests.length > 0)) { %>
+                        <span style="position: absolute; top: -4px; right: -6px; width: 8px; height: 8px; background-color: red; border-radius: 50%; display: inline-block;"></span>
+                    <% } %>
+                </a>
+                
+            </div>
+            <!-- Admin Profile -->
+            <div class="user-profile" style="position: relative;" id="adminProfileContainer">
+                <% if (admin && admin.profilePic) { %>
+                    <img src="<%= admin.profilePic %>" 
+                        alt="Admin Profile" 
+                        style="width: 35px; height: 35px; border-radius: 50%; border: 2px solid #007bff; object-fit: cover; cursor: pointer;">
+                <% } else { %>
+                    <i class="fas fa-user-shield" style="font-size: 22px; color: white; cursor: pointer;"></i>
+                <% } %>
+                <div class="dropdown-content" id="adminDropdownMenu" style="display: none;">
+                    <a href="/admin/adminProfile">
+                        <i class="fas fa-cogs" style="margin-right: 8px;"></i> Admin
+                    </a>
+                    <a href="javascript:void(0);" class="logout-btn" onclick="showLogoutModal()">
+                        <i class="fas fa-sign-out-alt" style="margin-right: 8px;"></i> Log Out
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Notification Dropdown Box -->
+    <div id="notificationDropdown" style="display: none; position: absolute; right: 0; top: 30px; background: #fff; width: 320px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); border-radius: 8px; z-index: 1000; overflow: hidden;">
+        <div style="padding: 15px;">
+            <h4 style="margin: 0 0 10px 0; font-size: 16px; border-bottom: 1px solid #eee; padding-bottom: 8px;">Notifications</h4>
+            <% if ((newCoachRequests && newCoachRequests.length > 0) || (newTeamRequests && newTeamRequests.length > 0)) { %>
+                <% newCoachRequests.forEach((coach, index) => { %>
+                    <div style="padding: 8px 0; border-bottom: 1px solid #eee;">
+                        <a href="/admin/coach" style="color: #141010; text-decoration: none; font-size: 14px; display: block;">
+                                            🔔 New Coordinator Account Request from <strong><%= coach.fullname %></strong>
+                        </a>
+                    </div>
+                <% }); %>
+                <% newTeamRequests.forEach((team, index) => { %>
+                    <div style="padding: 8px 0; border-bottom: 1px solid #eee;">
+                        <a href="/admin/team-request" style="color: #141010; text-decoration: none; font-size: 14px; display: block;">
+                                            ⚽ New Team Request: <strong><%= team.teamName %></strong>
+                        </a>
+                    </div>
+                <% }); %>
+            <% } else { %>
+                <p style="font-size: 14px; color: #999; margin: 10px 0;">No new notifications.</p>
+            <% } %>
+        </div>
+    </div>
+                
+    <main class="dashboard-container">
+        <% if (success) { %>
+            <div class="alert alert-success success-box">
+                <%= success %>
+            </div>
+        <% } %>
+        
+        <!-- Ongoing Events -->
+        <section class="events-section">
+            <h3>🟢 Ongoing Events</h3>
+            <div class="gallery-grid">
+                <% if (Array.isArray(ongoingEvents) && ongoingEvents.length > 0) { %>
+                    <% ongoingEvents.forEach(event => { %>
+                        <a href="/admin/events/<%= event.id %>" class="event-link">
+                            <div class="gallery-card">
+                                <img src="<%= event.image %>" alt="<%= event.title %>">
+                                <div class="card-content">
+                                    <h4><%= event.title %></h4>
+                                    <p><i class="fas fa-calendar-alt"></i> <%= event.date_schedule %></p>
+                                    <p><i class="fas fa-map-marker-alt"></i> <%= event.location %></p>
+                                </div>
+                            </div>
+                        </a>
+                    <% }) %>
+                <% } else { %>
+                    <p>No ongoing events available.</p>
+                <% } %>
+            </div>
+        </section>
+        
+        <!-- Expired Events -->
+        <section class="events-section">
+            <h3>🔴 Recent Events</h3>
+            <div class="gallery-grid">
+                <% if (Array.isArray(expiredEvents) && expiredEvents.length > 0) { %>
+                    <% expiredEvents.forEach(event => { %>
+                        <div class="gallery-card expired">
+                            <img src="<%= event.image %>" alt="<%= event.title %>">
+                            <div class="card-content">
+                                <h4><%= event.title %></h4>
+                                <p><i class="fas fa-calendar-alt"></i> <%= event.date_schedule %></p>
+                                <p><i class="fas fa-map-marker-alt"></i> <%= event.location %></p>
+                            </div>
+                        </div>
+                    <% }) %>
+                <% } else { %>
+                    <p>No Recent Events available.</p>
+                <% } %>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal for logout confirmation -->
+    <div id="logoutModal" class="modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="hideLogoutModal()">&times;</button>
+            <h3>Are you sure you want to log out?</h3>
+            <div class="modal-buttons">
+                <button id="confirmLogout" class="confirm-btn">Confirm</button>
+                <button id="cancelLogout" class="cancel-btn">Cancel</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let isSidebarOpen = false;
+
+        function toggleNav() {
+            const sidebar = document.getElementById("mySidebar");
+            const content = document.querySelector(".dashboard-container");
+            const sidebarBtn = document.querySelector(".sidebar-btn");
+
+            if (isSidebarOpen) {
+                sidebar.style.left = "-240px";  
+                content.style.marginLeft = "0"; 
+                sidebarBtn.innerHTML = "&#9776;"; 
+            } else {
+                sidebar.style.left = "0";  
+                content.style.marginLeft = "0";  
+                sidebarBtn.innerHTML = "&#9776;"; 
+            }
+            isSidebarOpen = !isSidebarOpen;  
+        }
+        
+        // Toggle the team dropdown
+        const teamDropdownBtn = document.querySelector('.team-dropdown-btn');
+        const teamDropdownContent = document.querySelector('.team-dropdown-content');
+        teamDropdownBtn.addEventListener('click', function() {
+            teamDropdownBtn.classList.toggle('active');
+            if (teamDropdownContent.style.display === "block") {
+                teamDropdownContent.style.display = "none";
+            } else {
+                teamDropdownContent.style.display = "block";
+            }
+        });
+        
+        // Show the logout confirmation modal
+        function showLogoutModal() {
+            document.getElementById('logoutModal').style.display = 'block';
+        }
+        
+        function hideLogoutModal() {
+            document.getElementById('logoutModal').style.display = 'none';
+        }
+        
+        document.getElementById('confirmLogout').addEventListener('click', function() {
+            window.location.href = '/admin/logout';  
+        });
+        
+        document.getElementById('cancelLogout').addEventListener('click', function() {
+            hideLogoutModal(); 
+        });
+        
+        //Success message 
+        window.addEventListener("DOMContentLoaded", () => {
+            const successAlert = document.querySelector(".alert-success");
+            if (successAlert) {
+                setTimeout(() => {
+                    successAlert.style.transition = "opacity 0.5s ease";
+                    successAlert.style.opacity = "0";
+                    setTimeout(() => successAlert.remove(), 500);
+                }, 1000);
+            }
+        });
+        
+        //Notification toggle
+        function toggleNotificationForm() {
+            const dropdown = document.getElementById('notificationDropdown');
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        }
+        
+        function closeNotificationForm() {
+            const dropdown = document.getElementById('notificationDropdown');
+            dropdown.style.display = 'none';
+        }
+        
+        window.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('notificationDropdown');
+            const bell = document.querySelector('.fa-bell');
+            
+            // Close notification dropdown if clicked outside
+            if (dropdown && !dropdown.contains(event.target) && !bell.contains(event.target)) {
+                dropdown.style.display = 'none';
+            }
+            
+            // Close admin dropdown if clicked outside
+            const adminProfileContainer = document.getElementById('adminProfileContainer');
+            const adminDropdownMenu = document.getElementById('adminDropdownMenu');
+            
+            if (adminProfileContainer && adminDropdownMenu && 
+                !adminProfileContainer.contains(event.target) && 
+                adminDropdownMenu.style.display === 'block') {
+                adminDropdownMenu.style.display = 'none';
+            }
+        });
+        
+        //admin profile dropdown - Fixed for desktop
+        document.addEventListener('DOMContentLoaded', () => {
+            const profileContainer = document.getElementById('adminProfileContainer');
+            const dropdownMenu = document.getElementById('adminDropdownMenu');
+            
+            profileContainer.addEventListener('click', function(e) {
+                e.stopPropagation();
+                // Toggle dropdown display
+                if (dropdownMenu.style.display === 'block') {
+                    dropdownMenu.style.display = 'none';
+                } else {
+                    dropdownMenu.style.display = 'block';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin | Add New Post</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #4361ee;
+      --primary-dark: #3a56d4;
+      --secondary: #6c757d;
+      --secondary-dark: #5a6268;
+      --light: #f8f9fa;
+      --dark: #212529;
+      --border: #e0e0e0;
+      --success: #28a745;
+      --danger: #dc3545;
+      --warning: #ffc107;
+      --info: #17a2b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background-color: #f5f7fb;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+      margin-bottom: 2rem;
+    }
+
+    .card-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .card-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--dark);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .card-body {
+      padding: 1.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: var(--dark);
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      font-size: 1rem;
+      line-height: 1.5;
+      color: #495057;
+      background-color: #fff;
+      background-clip: padding-box;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    }
+
+    .form-control:focus {
+      border-color: var(--primary);
+      outline: 0;
+      box-shadow: 0 0 0 0.2rem rgba(67, 97, 238, 0.25);
+    }
+
+    textarea.form-control {
+      min-height: 150px;
+      resize: vertical;
+    }
+
+    .file-upload {
+      position: relative;
+      overflow: hidden;
+      display: inline-block;
+      width: 100%;
+    }
+
+    .file-upload-input {
+      position: absolute;
+      left: 0;
+      top: 0;
+      opacity: 0;
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+    }
+
+    .file-upload-label {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      border: 2px dashed var(--border);
+      border-radius: 8px;
+      background-color: #fafbfd;
+      color: var(--secondary);
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .file-upload-label:hover {
+      border-color: var(--primary);
+      background-color: rgba(67, 97, 238, 0.05);
+    }
+
+    .file-upload-icon {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      color: var(--primary);
+    }
+
+    .file-upload-text {
+      font-size: 0.875rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .file-upload-hint {
+      font-size: 0.75rem;
+      color: var(--secondary);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 500;
+      text-align: center;
+      white-space: nowrap;
+      vertical-align: middle;
+      user-select: none;
+      border: 1px solid transparent;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      line-height: 1.5;
+      border-radius: 8px;
+      transition: all 0.15s ease-in-out;
+      cursor: pointer;
+      gap: 0.5rem;
+    }
+
+    .btn-primary {
+      color: white;
+      background-color: var(--primary);
+      border-color: var(--primary);
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-dark);
+      border-color: var(--primary-dark);
+    }
+
+    .btn-secondary {
+      color: white;
+      background-color: var(--secondary);
+      border-color: var(--secondary);
+    }
+
+    .btn-secondary:hover {
+      background-color: var(--secondary-dark);
+      border-color: var(--secondary-dark);
+    }
+
+    .btn-outline-secondary {
+      color: var(--secondary);
+      background-color: transparent;
+      border-color: var(--secondary);
+    }
+
+    .btn-outline-secondary:hover {
+      color: white;
+      background-color: var(--secondary);
+      border-color: var(--secondary);
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 1rem;
+      justify-content: flex-end;
+      margin-top: 1.5rem;
+    }
+
+    .preview-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .preview-item {
+      position: relative;
+      border-radius: 8px;
+      overflow: hidden;
+      aspect-ratio: 1;
+    }
+
+    .preview-item img,
+    .preview-item video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .preview-remove {
+      position: absolute;
+      top: 0.25rem;
+      right: 0.25rem;
+      background: rgba(0, 0, 0, 0.5);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 1rem;
+      }
+      
+      .card-header,
+      .card-body {
+        padding: 1.25rem;
+      }
+      
+      .btn-group {
+        flex-direction: column;
+      }
+      
+      .btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <div class="card-header">
+        <h1 class="card-title">
+          <i class="fas fa-plus-circle"></i> Create New Post
+        </h1>
+      </div>
+      <div class="card-body">
+        <form action="/admin/add-post" method="POST" enctype="multipart/form-data" id="postForm">
+          <div class="form-group">
+            <label for="media" class="form-label">Media Upload</label>
+            <div class="file-upload">
+              <input type="file" name="media" id="media" class="file-upload-input" accept="image/*,video/*" multiple required>
+              <label for="media" class="file-upload-label">
+                <i class="fas fa-cloud-upload-alt file-upload-icon"></i>
+                <span class="file-upload-text">Click to upload or drag and drop</span>
+                <span class="file-upload-hint">Supports JPG, PNG, MP4 (Max 10MB each)</span>
+              </label>
+            </div>
+            <div class="preview-container" id="previewContainer"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="caption" class="form-label">Caption</label>
+            <textarea name="caption" id="caption" class="form-control" placeholder="Write a compelling caption..." required></textarea>
+          </div>
+
+          <div class="btn-group">
+            <button type="button" class="btn btn-outline-secondary" onclick="window.location.href='/admin/posts'">
+              <i class="fas fa-arrow-left"></i> Cancel
+            </button>
+            <button type="submit" class="btn btn-primary">
+              <i class="fas fa-paper-plane"></i> Post
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Media preview functionality
+    const mediaInput = document.getElementById('media');
+    const previewContainer = document.getElementById('previewContainer');
+    
+    mediaInput.addEventListener('change', function() {
+      previewContainer.innerHTML = '';
+      
+      if (this.files) {
+        Array.from(this.files).forEach(file => {
+          const reader = new FileReader();
+          
+          reader.onload = function(e) {
+            const previewItem = document.createElement('div');
+            previewItem.className = 'preview-item';
+            
+            if (file.type.startsWith('image/')) {
+              const img = document.createElement('img');
+              img.src = e.target.result;
+              previewItem.appendChild(img);
+            } else if (file.type.startsWith('video/')) {
+              const video = document.createElement('video');
+              video.src = e.target.result;
+              video.controls = true;
+              previewItem.appendChild(video);
+            }
+            
+            const removeBtn = document.createElement('button');
+            removeBtn.className = 'preview-remove';
+            removeBtn.innerHTML = '<i class="fas fa-times"></i>';
+            removeBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              previewItem.remove();
+              // Remove the file from the input
+              const newFiles = Array.from(mediaInput.files).filter(f => f !== file);
+              const dataTransfer = new DataTransfer();
+              newFiles.forEach(f => dataTransfer.items.add(f));
+              mediaInput.files = dataTransfer.files;
+            });
+            
+            previewItem.appendChild(removeBtn);
+            previewContainer.appendChild(previewItem);
+          }
+          
+          reader.readAsDataURL(file);
+        });
+      }
+    });
+
+    // Drag and drop functionality
+    const fileUploadLabel = document.querySelector('.file-upload-label');
+    
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+      fileUploadLabel.addEventListener(eventName, preventDefaults, false);
+    });
+    
+    function preventDefaults(e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    
+    ['dragenter', 'dragover'].forEach(eventName => {
+      fileUploadLabel.addEventListener(eventName, highlight, false);
+    });
+    
+    ['dragleave', 'drop'].forEach(eventName => {
+      fileUploadLabel.addEventListener(eventName, unhighlight, false);
+    });
+    
+    function highlight() {
+      fileUploadLabel.classList.add('highlight');
+    }
+    
+    function unhighlight() {
+      fileUploadLabel.classList.remove('highlight');
+    }
+    
+    fileUploadLabel.addEventListener('drop', handleDrop, false);
+    
+    function handleDrop(e) {
+      const dt = e.dataTransfer;
+      const files = dt.files;
+      mediaInput.files = files;
+      
+      // Trigger change event manually
+      const event = new Event('change');
+      mediaInput.dispatchEvent(event);
+    }
+  </script>
+</body>
+</html>

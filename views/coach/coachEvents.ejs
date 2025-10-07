@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coordinator Events - SLAMS</title>
+    <link rel="stylesheet" href="/styles/frontpage.css">
+    <link rel="stylesheet" href="/styles/userEvents.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Main Layout Styles */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* Event List Styles */
+        .events-list {
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0;
+            list-style: none;
+        }
+
+        .event-item {
+            background-color: #ffffff;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            overflow: hidden;
+        }
+
+        .event-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.12);
+        }
+
+        .event-link {
+            display: flex;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .event-image {
+            width: 200px;
+            height: 150px;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        .event-details {
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .event-header {
+            margin-bottom: 12px;
+        }
+
+        .event-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #2c3e50;
+            margin: 0 0 8px 0;
+        }
+
+        .event-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 8px;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            font-size: 0.95em;
+            color: #555;
+        }
+
+        .meta-icon {
+            margin-right: 8px;
+            color: #3498db;
+            width: 16px;
+            text-align: center;
+        }
+
+        .event-description {
+            color: #666;
+            font-size: 0.95em;
+            margin: 8px 0;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .event-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+        }
+
+        .event-date {
+            font-size: 0.9em;
+            color: #7f8c8d;
+            font-weight: 500;
+        }
+
+        .view-btn {
+            padding: 6px 12px;
+            background-color: #3498db;
+            color: white;
+            border-radius: 4px;
+            font-size: 0.9em;
+            transition: background-color 0.3s;
+        }
+
+        .view-btn:hover {
+            background-color: #2980b9;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .empty-icon {
+            font-size: 3em;
+            color: #bdc3c7;
+            margin-bottom: 20px;
+        }
+
+        .empty-text {
+            color: #7f8c8d;
+            font-size: 1.1em;
+        }
+
+        /* Status Message */
+        .status-message {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            font-size: 1em;
+            text-align: center;
+        }
+
+        .error-message {
+            background-color: #ffebee;
+            color: #c62828;
+            border-left: 4px solid #ef5350;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .event-link {
+                flex-direction: column;
+            }
+            
+            .event-image {
+                width: 100%;
+                height: 180px;
+            }
+            
+            .event-details {
+                padding: 15px;
+            }
+            
+            .event-meta {
+                flex-direction: column;
+                gap: 8px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .event-title {
+                font-size: 1.1em;
+            }
+            
+            .meta-item {
+                font-size: 0.85em;
+            }
+            
+            .event-description {
+                font-size: 0.85em;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar Menu -->
+    <div id="mySidebar" class="sidebar">
+        <a href="/coach/homepage"><i class="fas fa-home"></i> Home</a>
+        <a href="/coach/posts"><i class="fas fa-newspaper"></i> Posts</a>
+        <a href="/coach/gallery"><i class="fas fa-image"></i> Gallery</a>
+        <a href="/coach/events" class="active"><i class="fas fa-calendar-alt"></i> Events</a>
+        <!-- Team link with sub-sidebar -->
+        <a href="javascript:void(0);" class="team-link" onclick="toggleSubSidebar()"><i class="fas fa-users-cog"></i> Team</a>
+        <div class="sub-sidebar" id="subSidebar">
+            <a href="/coach/my-team"><i class="fas fa-users"></i> My Team</a>
+            <a href="/coach/all-teams"><i class="fas fa-landmark"></i> All Teams</a>
+        </div>
+    </div>
+
+    <!-- Sidebar toggle button -->
+    <span class="sidebar-btn" onclick="toggleNav()">&#9776;</span>
+
+    <header class="header">
+        <div class="logo">
+            <a href="/coach/homepage" style="text-decoration: none;">
+                <img src="/images/cityYouth.jpg" alt="SLAMS Logo">
+            </a>
+            <span class="slams-title">SLAMS</span>
+        </div>
+
+        <div class="menu-bar">
+            <div class="user-profile">
+                <% if (coach && coach.coachProfile) { %>
+                    <img src="<%= coach.coachProfile %>" alt="Profile" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #fff;">
+                <% } else { %>
+                    <i class="fas fa-user-shield"></i>
+                <% } %>
+            </div>
+        </div>
+    </header>
+    <div class="dropdown-content">
+                    <a href="/coach/profile">
+                        <i class="fas fa-cogs" style="margin-right: 8px;"></i> Profile
+                    </a>
+                    <a href="javascript:void(0);" class="logout-btn" onclick="showLogoutModal()">
+                        <i class="fas fa-sign-out-alt" style="margin-right: 8px;"></i> Log Out
+                    </a>
+                </div>
+
+    <main class="dashboard-container">
+        <h2 style="margin-bottom: 20px; font-size: 1.8em; color: #2c3e50; font-weight: 600;">Upcoming Events</h2>
+
+        <% if (coachStatus !== 'confirmed') { %>
+            <div class="status-message error-message">
+                <p>Your account is pending verification. You can view events but some features may be restricted.</p>
+            </div>
+        <% } %>
+
+        <div class="events-container">
+            <% if (events && events.length > 0) { %>
+                <ul class="events-list">
+                    <% events.forEach(event => { %>
+                        <li class="event-item">
+                            <a href="/coach/events/<%= event.id %>" class="event-link">
+                                <img src="<%= event.image %>" alt="<%= event.title %>" class="event-image">
+                                <div class="event-details">
+                                    <div>
+                                        <div class="event-header">
+                                            <h3 class="event-title"><%= event.title %></h3>
+                                            <div class="event-meta">
+                                                <span class="meta-item">
+                                                    <i class="fas fa-calendar-alt meta-icon"></i>
+                                                    <%= new Date(event.date_schedule).toLocaleDateString('en-US', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' }) %>
+                                                </span>
+                                                <span class="meta-item">
+                                                    <i class="fas fa-clock meta-icon"></i>
+                                                    <%= new Date(event.date_schedule).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) %>
+                                                </span>
+                                                <span class="meta-item">
+                                                    <i class="fas fa-map-marker-alt meta-icon"></i>
+                                                    <%= event.location %>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <% if (event.description) { %>
+                                            <p class="event-description"><%= event.description.length > 150 ? event.description.substring(0, 150) + '...' : event.description %></p>
+                                        <% } %>
+                                    </div>
+                                    <div class="event-footer">
+                                        <span class="event-date">
+                                            Posted: <%= new Date(event.created_at).toLocaleDateString() %>
+                                        </span>
+                                        <span class="view-btn">
+                                            View Details <i class="fas fa-chevron-right" style="margin-left: 5px;"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                    <% }); %>
+                </ul>
+            <% } else { %>
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <i class="far fa-calendar-alt"></i>
+                    </div>
+                    <h3 class="empty-text">No upcoming events at this time</h3>
+                    <p>Check back later for new events or contact your administrator</p>
+                </div>
+            <% } %>
+        </div>
+    </main>
+
+    <!-- Modal for logout confirmation -->
+    <div id="logoutModal" class="modal">
+        <div class="modal-content">
+            <h3>Are you sure you want to log out?</h3>
+            <button id="confirmLogout" class="confirm-btn">Confirm</button>
+            <button id="cancelLogout" class="cancel-btn">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        let isSidebarOpen = false;
+
+        const sidebar = document.getElementById("mySidebar");
+        const sidebarBtn = document.querySelector(".sidebar-btn");
+        const content = document.querySelector(".dashboard-container");
+
+        // Sidebar toggle
+        window.toggleNav = function () {
+            if (isSidebarOpen) {
+                sidebar.style.left = "-240px";
+                if (content) content.style.marginLeft = "0";
+                sidebarBtn.innerHTML = "&#9776;";
+            } else {
+                sidebar.style.left = "0";
+                if (content) content.style.marginLeft = "240px";
+                sidebarBtn.innerHTML = "&times;";
+            }
+            isSidebarOpen = !isSidebarOpen;
+        };
+
+        // Sub-sidebar toggle
+        const subSidebar = document.getElementById("subSidebar");
+        const teamLink = document.querySelector(".team-link");
+
+        window.toggleSubSidebar = function () {
+            if (subSidebar.style.display === "block") {
+                subSidebar.style.display = "none";
+                teamLink.classList.remove("active");
+            } else {
+                subSidebar.style.display = "block";
+                teamLink.classList.add("active");
+            }
+        };
+
+        // Logout Modal logic
+        const logoutModal = document.getElementById('logoutModal');
+        const confirmLogout = document.getElementById('confirmLogout');
+        const cancelLogout = document.getElementById('cancelLogout');
+
+        window.showLogoutModal = function () {
+            logoutModal.style.display = 'block';
+        };
+
+        function hideLogoutModal() {
+            logoutModal.style.display = 'none';
+        }
+
+        if (confirmLogout) {
+            confirmLogout.addEventListener('click', function () {
+                window.location.href = '/coach/logout';
+            });
+        }
+
+        if (cancelLogout) {
+            cancelLogout.addEventListener('click', function () {
+                hideLogoutModal();
+            });
+        }
+
+        // User profile dropdown
+        const userProfile = document.querySelector('.user-profile');
+        const dropdown = document.querySelector('.dropdown-content');
+        let hideTimeout;
+
+        userProfile.addEventListener('click', function(e) {
+            e.stopPropagation();
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        });
+    });
+    </script>
+</body>
+
+</html>

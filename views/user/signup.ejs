@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - SLAMS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles/frontpage.css">
+    <link rel="stylesheet" href="/styles/signup.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="logo">
+            <a href="/" style="text-decoration: none;">
+                <img src="/images/cityYouth.jpg" alt="SLAMS Logo">
+            </a>
+            <span class="slams-title">SLAMS</span>
+        </div>
+    </header>
+    <main class="signup-container">
+        <div class="signup-form">
+            <h2>Sign Up</h2>
+            <h3>Create an account</h3>
+
+            <!-- Success Message -->
+            <% if (messages.success) { %>
+                <div class="alert alert-success">
+                    <%= messages.success %>
+                </div>
+            <% } %>
+
+            <!-- Error Message -->
+            <% if (messages.error) { %>
+                <div class="alert alert-danger">
+                    <%= messages.error %>
+                </div>
+            <% } %>
+
+            <!-- Validation Errors -->
+            <% if (messages.errors && messages.errors.length > 0) { %>
+                <ul class="alert alert-danger">
+                    <% messages.errors.forEach(function(error) { %>
+                        <li><%= error %></li>
+                    <% }) %>
+                </ul>
+            <% } %>
+
+            <form action="/signup" method="POST">
+                <div class="input-group">
+                    <input type="email" name="email" placeholder="Email" value="<%= oldEmail %>" required>
+                </div>
+                <div class="input-group">
+                    <input type="password" name="password" id="password" placeholder="Password" required>
+                    <i class="toggle-password fas fa-eye" onclick="togglePassword('password')"></i>
+                </div>
+                <div class="input-group">
+                    <input type="password" name="confirm_password" id="confirm_password" placeholder="Confirm Password" required>
+                    <i class="toggle-password fas fa-eye" onclick="togglePassword('confirm_password')"></i>
+                </div>
+                <button type="submit">Sign Up</button>
+                <p>Or</p>
+            </form>
+
+            <!-- In your signup.ejs -->
+            <div class="google-signup">
+                <a href="/auth/google" class="google-btn">
+                    <i class="fab fa-google"></i> Sign in with Google
+                </a>
+            </div>
+
+            <p>Already have an account? <a href="/login">Log in</a></p>
+            <p>Signup as <a href="/coach/signup">Coordinator</a></p>
+        </div>
+    </main>
+
+    <script>
+        function togglePassword(fieldId) {
+            const passwordField = document.getElementById(fieldId);
+            const toggleIcon = passwordField.nextElementSibling;
+
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+                toggleIcon.classList.remove("fa-eye");
+                toggleIcon.classList.add("fa-eye-slash");
+            } else {
+                passwordField.type = "password";
+                toggleIcon.classList.remove("fa-eye-slash");
+                toggleIcon.classList.add("fa-eye");
+            }
+        }
+    </script>
+</body>
+</html>
