@@ -1256,6 +1256,223 @@ exports.getAdminRegisteredTeam = async (req, res) => {
 
 
 
+// Get Event History Page
+exports.getEventHistory = async (req, res) => {
+    if (!req.session.admin) {
+        return res.redirect("/admin");
+    }
+
+    try {
+        const adminId = req.session.admin.id;
+        const [adminData] = await db.execute("SELECT * FROM admins WHERE id = ?", [adminId]);
+        const admin = adminData[0];
+
+        // Get all expired events
+        const [expiredEvents] = await db.execute(
+            "SELECT * FROM events WHERE status = 'expired' ORDER BY date_schedule DESC"
+        );
+
+        // Get tournament results for each event
+        const eventsWithResults = await Promise.all(
+            expiredEvents.map(async (event) => {
+                // Get all completed brackets for this event
+                const [brackets] = await db.execute(
+                    `SELECT tb.*, tp.champion_team_id, t.teamName as champion_name
+                     FROM tournament_brackets tb
+                     LEFT JOIN tournament_progress tp ON tb.id = tp.bracket_id
+                     LEFT JOIN team t ON tp.champion_team_id = t.id
+                     WHERE tb.event_id = ? AND tp.is_completed = TRUE
+                     ORDER BY tb.sport_type`,
+                    [event.id]
+                );
+
+                // Group champions by sport type
+                const sportsChampions = [];
+                const esportsChampions = [];
+                const otherActivitiesChampions = [];
+
+                brackets.forEach(bracket => {
+                    const championInfo = {
+                        sport: bracket.sport_type,
+                        champion: bracket.champion_name,
+                        teamId: bracket.champion_team_id,
+                        bracketType: bracket.bracket_type
+                    };
+
+                    // Check if this sport belongs to sports, esports, or other_activities
+                    if (event.sports && event.sports.includes(bracket.sport_type)) {
+                        sportsChampions.push(championInfo);
+                    } else if (event.esports && event.esports.includes(bracket.sport_type)) {
+                        esportsChampions.push(championInfo);
+                    } else if (event.other_activities && event.other_activities.includes(bracket.sport_type)) {
+                        otherActivitiesChampions.push(championInfo);
+                    }
+                });
+
+                return {
+                    ...event,
+                    sportsChampions,
+                    esportsChampions,
+                    otherActivitiesChampions,
+                    totalChampions: brackets.length
+                };
+            })
+        );
+
+        // Get notification data
+        const newCoachRequests = await getPendingCoachNotifications();
+        const newTeamRequests = await getPendingTeamNotifications();
+
+        res.render('admin/eventHistory', {
+            admin: admin,
+            events: eventsWithResults,
+            success: req.flash('success'),
+            error: req.flash('error'),
+            newCoachRequests: newCoachRequests,
+            newTeamRequests: newTeamRequests
+        });
+    } catch (error) {
+        console.error('Error loading event history:', error);
+        req.flash('error', 'Error loading event history');
+        res.redirect('/admin/home');
+    }
+};
+
+// Get detailed event results
+exports.getEventResults = async (req, res) => {
+    if (!req.session.admin) {
+        return res.redirect("/admin");
+    }
+
+    try {
+        const { eventId } = req.params;
+
+        // Get event details
+        const [events] = await db.execute(
+            "SELECT * FROM events WHERE id = ?",
+            [eventId]
+        );
+
+        if (events.length === 0) {
+            return res.status(404).json({ error: 'Event not found' });
+        }
+
+        const event = events[0];
+
+        // Get all brackets for this event
+        const [brackets] = await db.execute(
+            `SELECT tb.*, tp.champion_team_id, t.teamName as champion_name, 
+                    tp.current_round, tp.is_completed,
+                    COUNT(m.id) as total_matches,
+                    SUM(CASE WHEN m.status = 'completed' THEN 1 ELSE 0 END) as completed_matches
+             FROM tournament_brackets tb
+             LEFT JOIN tournament_progress tp ON tb.id = tp.bracket_id
+             LEFT JOIN team t ON tp.champion_team_id = t.id
+             LEFT JOIN matches m ON tb.id = m.bracket_id
+             WHERE tb.event_id = ?
+             GROUP BY tb.id
+             ORDER BY tb.sport_type`,
+            [eventId]
+        );
+
+        // Get detailed bracket information
+        const bracketsWithDetails = await Promise.all(
+            brackets.map(async (bracket) => {
+                // Get all matches for this bracket
+                const [matches] = await db.execute(
+                    `SELECT m.*, t1.teamName as team1_name, t2.teamName as team2_name, 
+                            winner.teamName as winner_name
+                     FROM matches m
+                     LEFT JOIN team t1 ON m.team1_id = t1.id
+                     LEFT JOIN team t2 ON m.team2_id = t2.id
+                     LEFT JOIN team winner ON m.winner_team_id = winner.id
+                     WHERE m.bracket_id = ?
+                     ORDER BY m.round_number, m.match_number`,
+                    [bracket.id]
+                );
+
+                // Calculate bracket statistics
+                const totalTeams = new Set();
+                matches.forEach(match => {
+                    if (match.team1_id) totalTeams.add(match.team1_id);
+                    if (match.team2_id) totalTeams.add(match.team2_id);
+                });
+
+                return {
+                    ...bracket,
+                    matches: matches,
+                    totalTeams: totalTeams.size,
+                    completionRate: bracket.total_matches > 0 ? 
+                        Math.round((bracket.completed_matches / bracket.total_matches) * 100) : 0
+                };
+            })
+        );
+
+        res.json({
+            event: event,
+            brackets: bracketsWithDetails
+        });
+    } catch (error) {
+        console.error('Error getting event results:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
+// Export event results
+exports.exportEventResults = async (req, res) => {
+    if (!req.session.admin) {
+        return res.redirect("/admin");
+    }
+
+    try {
+        const { eventId } = req.params;
+
+        // Get event details
+        const [events] = await db.execute(
+            "SELECT * FROM events WHERE id = ?",
+            [eventId]
+        );
+
+        if (events.length === 0) {
+            return res.status(404).json({ error: 'Event not found' });
+        }
+
+        const event = events[0];
+
+        // Get all completed brackets with champions
+        const [brackets] = await db.execute(
+            `SELECT tb.sport_type, tb.bracket_type, t.teamName as champion_name,
+                    c.fullname as coach_name, t.organization
+             FROM tournament_brackets tb
+             LEFT JOIN tournament_progress tp ON tb.id = tp.bracket_id
+             LEFT JOIN team t ON tp.champion_team_id = t.id
+             LEFT JOIN coach c ON t.coach_id = c.id
+             WHERE tb.event_id = ? AND tp.is_completed = TRUE
+             ORDER BY tb.sport_type`,
+            [eventId]
+        );
+
+        // Create CSV content
+        let csvContent = `Event: ${event.title}\n`;
+        csvContent += `Date: ${event.date_schedule}\n`;
+        csvContent += `Location: ${event.location}\n\n`;
+        csvContent += 'Sport,Bracket Type,Champion Team,Coach,Organization\n';
+        
+        brackets.forEach(bracket => {
+            csvContent += `"${bracket.sport_type}","${bracket.bracket_type.replace('_', ' ')}","${bracket.champion_name || 'N/A'}","${bracket.coach_name || 'N/A'}","${bracket.organization || 'N/A'}"\n`;
+        });
+
+        // Set response headers for file download
+        res.setHeader('Content-Type', 'text/csv');
+        res.setHeader('Content-Disposition', `attachment; filename="${event.title.replace(/\s+/g, '_')}_results.csv"`);
+        res.send(csvContent);
+
+    } catch (error) {
+        console.error('Error exporting event results:', error);
+        req.flash('error', 'Error exporting event results');
+        res.redirect('/admin/event-history');
+    }
+};
 
 
 
