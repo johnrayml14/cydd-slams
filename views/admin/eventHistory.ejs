@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event History - SLAMS</title>
+    <link rel="stylesheet" href="/styles/adminHome.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap" rel="stylesheet">
+<style>
+        .event-history-container {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #f8f9fa;
+            min-height: 100vh;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .page-header h1 {
+            color: #333;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .page-header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .events-grid {
+            display: grid;
+            gap: 25px;
+        }
+
+        .event-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            border: 1px solid #e0e0e0;
+            transition: all 0.3s ease;
+        }
+
+        .event-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .event-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #007bff;
+        }
+
+        .event-title {
+            color: #333;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .event-date {
+            color: #666;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .event-location {
+            color: #666;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 5px;
+        }
+
+        .champions-section {
+            margin-top: 20px;
+        }
+
+        .section-title {
+            color: #333;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .champions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .champion-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #28a745;
+        }
+
+        .champion-sport {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .champion-team {
+            color: #28a745;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .bracket-type {
+            color: #666;
+            font-size: 0.9rem;
+            font-style: italic;
+        }
+
+        .no-champions {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .event-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #1e7e34;
+            transform: translateY(-2px);
+        }
+
+        .btn-info {
+            background: #17a2b8;
+            color: white;
+        }
+
+        .btn-info:hover {
+            background: #138496;
+            transform: translateY(-2px);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            color: #ddd;
+            margin-bottom: 20px;
+        }
+
+        .empty-state h3 {
+            color: #999;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .event-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .champions-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .event-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar Menu -->
+    <div id="mySidebar" class="sidebar">
+        <a href="/admin/home" class="active"><i class="fas fa-home"></i> Home</a>
+        <a href="/admin/posts" ><i class="fas fa-newspaper"></i> Posts</a>
+        <a href="/admin/events"><i class="fas fa-calendar-alt"></i> Events</a>
+        <a href="/admin/schedule"><i class="fas fa-calendar-day"></i> Schedule</a>
+        <a href="/admin/coach"><i class="fas fa-chalkboard-teacher"></i> Coordinator Request</a>
+        <!-- Team dropdown section -->
+        <a href="javascript:void(0);" class="team-dropdown-btn"><i class="fas fa-users-cog"></i> Teams</a>
+        <div class="team-dropdown-content">
+            <a href="/admin/team-request"><i class="fas fa-users"></i> Team Request</a>
+            <a href="/admin/registered-team"><i class="fas fa-landmark"></i> All Team</a>
+        </div>
+        <a href="/admin/users"><i class="fas fa-users"></i> Players</a>
+        <a href="/admin/event-history"><i class="fas fa-history"></i> Event History</a>
+    </div>
+    <!-- Sidebar toggle button -->
+    <span class="sidebar-btn" onclick="toggleNav()">&#9776;</span>
+    
+    <header class="header" style="display: flex; justify-content: space-between; align-items: center;">
+        <div class="logo">
+            <a href="/admin/home" style="text-decoration: none;">
+                <img src="/images/cityYouth.jpg" alt="SLAMS Logo">
+            </a>
+            <span class="slams-title">SLAMS</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 20px;">
+            <!-- Admin Profile -->
+            <div class="user-profile" style="position: relative;" id="adminProfileContainer">
+                <% if (admin && admin.profilePic) { %>
+                    <img src="<%= admin.profilePic %>" 
+                        alt="Admin Profile" 
+                        style="width: 35px; height: 35px; border-radius: 50%; border: 2px solid #007bff; object-fit: cover;">
+                <% } else { %>
+                    <i class="fas fa-user-shield" style="font-size: 22px; color: white;"></i>
+                <% } %>
+                <div class="dropdown-content" id="adminDropdownMenu" style="display: none;">
+                    <a href="/admin/adminProfile">
+                        <i class="fas fa-cogs" style="margin-right: 8px;"></i> Admin
+                    </a>
+                    <a href="javascript:void(0);" class="logout-btn" onclick="showLogoutModal()">
+                        <i class="fas fa-sign-out-alt" style="margin-right: 8px;"></i> Log Out
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+   <main class="event-history-container">
+        <div class="page-header">
+            <h1><i class="fas fa-history"></i> Event History</h1>
+            <p>View past events and tournament results</p>
+        </div>
+
+        <% if (events.length === 0) { %>
+            <div class="empty-state">
+                <i class="fas fa-calendar-times"></i>
+                <h3>No Past Events Found</h3>
+                <p>There are no expired events in the system yet.</p>
+                <a href="/admin/events" class="btn btn-primary">
+                    <i class="fas fa-calendar-plus"></i> Manage Events
+                </a>
+            </div>
+        <% } else { %>
+            <div class="events-grid">
+                <% events.forEach(event => { %>
+                    <div class="event-card">
+                        <div class="event-header">
+                            <div>
+                                <h3 class="event-title"><%= event.title %></h3>
+                                <div class="event-date">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    <%= new Date(event.date_schedule).toLocaleDateString('en-US', { 
+                                        year: 'numeric', 
+                                        month: 'long', 
+                                        day: 'numeric' 
+                                    }) %>
+                                </div>
+                                <div class="event-location">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <%= event.location %>
+                                </div>
+                            </div>
+                            <div class="event-stats">
+                                <span class="badge" style="background: #6c757d; color: white; padding: 5px 10px; border-radius: 15px;">
+                                    <%= event.totalChampions || 0 %> Champions
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="champions-section">
+                            <% if (event.sportsChampions.length > 0) { %>
+                                <h4 class="section-title"><i class="fas fa-running"></i> Sports Champions</h4>
+                                <div class="champions-grid">
+                                    <% event.sportsChampions.forEach(champion => { %>
+                                        <div class="champion-card">
+                                            <div class="champion-sport"><%= champion.sport %></div>
+                                            <div class="champion-team"><%= champion.champion %></div>
+                                            <div class="bracket-type"><%= champion.bracketType.replace('_', ' ') %></div>
+                                        </div>
+                                    <% }); %>
+                                </div>
+                            <% } %>
+
+                            <% if (event.esportsChampions.length > 0) { %>
+                                <h4 class="section-title"><i class="fas fa-gamepad"></i> Esports Champions</h4>
+                                <div class="champions-grid">
+                                    <% event.esportsChampions.forEach(champion => { %>
+                                        <div class="champion-card">
+                                            <div class="champion-sport"><%= champion.sport %></div>
+                                            <div class="champion-team"><%= champion.champion %></div>
+                                            <div class="bracket-type"><%= champion.bracketType.replace('_', ' ') %></div>
+                                        </div>
+                                    <% }); %>
+                                </div>
+                            <% } %>
+
+                            <% if (event.otherActivitiesChampions.length > 0) { %>
+                                <h4 class="section-title"><i class="fas fa-star"></i> Other Activities Champions</h4>
+                                <div class="champions-grid">
+                                    <% event.otherActivitiesChampions.forEach(champion => { %>
+                                        <div class="champion-card">
+                                            <div class="champion-sport"><%= champion.sport %></div>
+                                            <div class="champion-team"><%= champion.champion %></div>
+                                            <div class="bracket-type"><%= champion.bracketType.replace('_', ' ') %></div>
+                                        </div>
+                                    <% }); %>
+                                </div>
+                            <% } %>
+
+                            <% if (event.totalChampions === 0) { %>
+                                <div class="no-champions">
+                                    <i class="fas fa-trophy" style="font-size: 2rem; color: #ddd; margin-bottom: 10px;"></i>
+                                    <p>No tournament results available for this event.</p>
+                                </div>
+                            <% } %>
+                        </div>
+
+                        <div class="event-actions">
+                            <button class="btn btn-info view-results-btn" data-event-id="<%= event.id %>">
+                                <i class="fas fa-chart-bar"></i> View Detailed Results
+                            </button>
+                            <a href="/admin/event-history/export/<%= event.id %>" class="btn btn-success">
+                                <i class="fas fa-download"></i> Export Results
+                            </a>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        <% } %>
+    </main>
+
+    <!-- Results Modal -->
+    <div id="resultsModal" class="modal">
+        <div class="modal-content" style="max-width: 800px;">
+            <h3 id="modalTitle">Event Results</h3>
+            <div id="modalContent">
+                <!-- Dynamic content will be loaded here -->
+            </div>
+            <div class="form-actions">
+                <button class="btn btn-secondary" onclick="closeModal('resultsModal')">Close</button>
+            </div>
+        </div>
+    </div>
+                
+    
+
+    <!-- Modal for logout confirmation -->
+     <div id="logoutModal" class="modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="hideLogoutModal()">&times;</button>
+            <h3>Are you sure you want to log out?</h3>
+            <div class="modal-buttons">
+                <button id="confirmLogout" class="confirm-btn">Confirm</button>
+                <button id="cancelLogout" class="cancel-btn">Cancel</button>
+            </div>
+        </div>
+    
+    <script>
+
+        // View detailed results
+        document.querySelectorAll('.view-results-btn').forEach(btn => {
+            btn.addEventListener('click', async function() {
+                const eventId = this.dataset.eventId;
+                await loadEventResults(eventId);
+            });
+        });
+
+        async function loadEventResults(eventId) {
+            try {
+                const response = await fetch(`/admin/event-history/results/${eventId}`);
+                const data = await response.json();
+                
+                if (data.error) {
+                    alert(data.error);
+                    return;
+                }
+
+                displayResultsModal(data);
+            } catch (error) {
+                console.error('Error loading event results:', error);
+                alert('Error loading event results');
+            }
+        }
+
+        function displayResultsModal(data) {
+            const modalTitle = document.getElementById('modalTitle');
+            const modalContent = document.getElementById('modalContent');
+            
+            modalTitle.textContent = `Results - ${data.event.title}`;
+            
+            let html = `
+                <div style="margin-bottom: 20px;">
+                    <p><strong>Date:</strong> ${new Date(data.event.date_schedule).toLocaleDateString()}</p>
+                    <p><strong>Location:</strong> ${data.event.location}</p>
+                </div>
+            `;
+
+            if (data.brackets.length === 0) {
+                html += '<p>No tournament brackets found for this event.</p>';
+            } else {
+                data.brackets.forEach(bracket => {
+                    html += `
+                        <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                            <h4 style="margin: 0 0 10px 0; color: #333;">${bracket.sport_type} (${bracket.bracket_type.replace('_', ' ')})</h4>
+                            ${bracket.champion_name ? `
+                                <p style="margin: 5px 0; color: #28a745; font-weight: 600;">
+                                    <i class="fas fa-trophy"></i> Champion: ${bracket.champion_name}
+                                </p>
+                            ` : '<p style="margin: 5px 0; color: #666;">No champion determined</p>'}
+                            <p style="margin: 5px 0; color: #666;">
+                                Progress: ${bracket.completed_matches}/${bracket.total_matches} matches completed (${bracket.completionRate}%)
+                            </p>
+                            <p style="margin: 5px 0; color: #666;">Teams: ${bracket.totalTeams}</p>
+                        </div>
+                    `;
+                });
+            }
+
+            modalContent.innerHTML = html;
+            document.getElementById('resultsModal').style.display = 'block';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        //Sidebar toggle
+        let isSidebarOpen = false;
+
+        function toggleNav() {
+            const sidebar = document.getElementById("mySidebar");
+            const content = document.querySelector(".dashboard-container");
+            const sidebarBtn = document.querySelector(".sidebar-btn");
+
+            if (isSidebarOpen) {
+                sidebar.style.left = "-240px";  
+                content.style.marginLeft = "0"; 
+                sidebarBtn.innerHTML = "&#9776;"; 
+            } else {
+                sidebar.style.left = "0";  
+                content.style.marginLeft = "0";  
+                sidebarBtn.innerHTML = "&#9776;"; 
+            }
+            isSidebarOpen = !isSidebarOpen;  
+        }
+        
+        // Toggle the team dropdown
+        const teamDropdownBtn = document.querySelector('.team-dropdown-btn');
+        const teamDropdownContent = document.querySelector('.team-dropdown-content');
+        teamDropdownBtn.addEventListener('click', function() {
+            teamDropdownBtn.classList.toggle('active');
+            if (teamDropdownContent.style.display === "block") {
+                teamDropdownContent.style.display = "none";
+            } else {
+                teamDropdownContent.style.display = "block";
+            }
+        });
+        
+        // Show the logout confirmation modal
+        function showLogoutModal() {
+            document.getElementById('logoutModal').style.display = 'block';
+        }
+        
+        function hideLogoutModal() {
+            document.getElementById('logoutModal').style.display = 'none';
+        }
+        
+        document.getElementById('confirmLogout').addEventListener('click', function() {
+            window.location.href = '/admin/logout';  
+        });
+        
+        document.getElementById('cancelLogout').addEventListener('click', function() {
+            hideLogoutModal(); 
+        });
+        
+        //Success message 
+        window.addEventListener("DOMContentLoaded", () => {
+            const successAlert = document.querySelector(".alert-success");
+            if (successAlert) {
+                setTimeout(() => {
+                    successAlert.style.transition = "opacity 0.5s ease";
+                    successAlert.style.opacity = "0";
+                    setTimeout(() => successAlert.remove(), 500);
+                }, 1000);
+            }
+        });
+        
+        
+        //admin profile dropdown
+        document.addEventListener('DOMContentLoaded', () => {
+            const profileContainer = document.getElementById('adminProfileContainer');
+            const dropdownMenu = document.getElementById('adminDropdownMenu');
+            let hideTimeout;
+
+            profileContainer.addEventListener('click', function(e) {
+            e.stopPropagation();
+            dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block';
+        });
+        });
+    </script>
+</body>
+</html>
