@@ -16,6 +16,7 @@ const { adminPostUpload,
         userProfileUpload } = require('../config/cloudinary');
 const uploadProfile = require('../config/adminProfileMulter');
 const { combinedUpload } = require("../config/adminEventMulter");
+const scheduleController = require('../controllers/scheduleController');
 
 
 
@@ -199,11 +200,27 @@ router.post('/admin/users/remove/:player_id', adminAuthMiddleware, adminControll
 router.get("/admin/team-request", adminAuthMiddleware, adminController.getAdminTeamRequest);
 router.post('/admin/handle-team-request', adminController.handleTeamRequest);
 router.get("/admin/registered-team", adminAuthMiddleware, adminController.getAdminRegisteredTeam);
+router.get('/admin/event-history', adminController.getEventHistory);
+router.get('/admin/event-history/results/:eventId', adminController.getEventResults);
+router.get('/admin/event-history/export/:eventId', adminController.exportEventResults);
 
+
+// Schedule and Tournament Management Routes
+router.get("/admin/schedule", adminAuthMiddleware, scheduleController.getSchedulePage);
+router.get("/admin/schedule/event/:eventId/sports", adminAuthMiddleware, scheduleController.getEventSports);
+router.get("/admin/schedule/event/:eventId/sport/:sportType/teams", adminAuthMiddleware, scheduleController.getEventTeams);
+router.post("/admin/schedule/create-bracket", adminAuthMiddleware, scheduleController.createTournamentBracket);
+router.get("/admin/schedule/bracket/:bracketId/matches", adminAuthMiddleware, scheduleController.getBracketMatches);
+router.put("/admin/schedule/match/:matchId/schedule", adminAuthMiddleware, scheduleController.updateMatchSchedule);
+router.put("/admin/schedule/match/:matchId/result", adminAuthMiddleware, scheduleController.updateMatchResult);
+router.post("/admin/schedule/generate-next-round", adminAuthMiddleware, scheduleController.generateNextRoundManual);
+router.get("/admin/schedule/event/:eventId/brackets", adminAuthMiddleware, scheduleController.getEventBrackets);
+router.post("/admin/schedule/set-champion", adminAuthMiddleware, scheduleController.setChampionManually);
 
 
 
 module.exports = router;
+
 
 
 
