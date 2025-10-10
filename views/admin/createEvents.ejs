@@ -701,17 +701,24 @@ body {
     <!-- Sidebar toggle button -->
     <span class="sidebar-btn" onclick="toggleNav()">&#9776;</span>
 
-    <header class="header">
+    <header class="header" style="display: flex; justify-content: space-between; align-items: center;">
         <div class="logo">
             <a href="/admin/home" style="text-decoration: none;">
                 <img src="/images/cityYouth.jpg" alt="SLAMS Logo">
             </a>
+            <span class="slams-title">CYSDD</span>
         </div>
-
-        <div class="menu-bar">
-            <div class="user-profile">
-                <i class="fas fa-user-shield"></i>
-                <div class="dropdown-content">
+        <div style="display: flex; align-items: center; gap: 20px;">
+            <!-- Admin Profile -->
+            <div class="user-profile" style="position: relative;" id="adminProfileContainer">
+                <% if (admin && admin.profilePic) { %>
+                    <img src="<%= admin.profilePic %>" 
+                        alt="Admin Profile" 
+                        style="width: 35px; height: 35px; border-radius: 50%; border: 2px solid #007bff; object-fit: cover;">
+                <% } else { %>
+                    <i class="fas fa-user-shield" style="font-size: 22px; color: white;"></i>
+                <% } %>
+                <div class="dropdown-content" id="adminDropdownMenu" style="display: none;">
                     <a href="/admin/adminProfile">
                         <i class="fas fa-cogs" style="margin-right: 8px;"></i> Admin
                     </a>
@@ -1081,4 +1088,5 @@ const userProfile = document.querySelector('.user-profile');
     </script>
 </body>
 </html>
+
 
