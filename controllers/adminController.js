@@ -1338,7 +1338,7 @@ exports.getEventHistory = async (req, res) => {
     }
 };
 
-// Get detailed event results
+// Get detailed event results - OPTIMIZED VERSION
 exports.getEventResults = async (req, res) => {
     if (!req.session.admin) {
         return res.redirect("/admin");
@@ -1361,23 +1361,29 @@ exports.getEventResults = async (req, res) => {
 
         // Get all brackets for this event
         const [brackets] = await db.execute(
-            `SELECT tb.*, tp.champion_team_id, t.teamName as champion_name, 
-                    tp.current_round, tp.is_completed,
-                    COUNT(m.id) as total_matches,
-                    SUM(CASE WHEN m.status = 'completed' THEN 1 ELSE 0 END) as completed_matches
+            `SELECT tb.*, tp.champion_team_id, t.teamName as champion_name,
+                    tp.current_round, tp.is_completed
              FROM tournament_brackets tb
              LEFT JOIN tournament_progress tp ON tb.id = tp.bracket_id
              LEFT JOIN team t ON tp.champion_team_id = t.id
-             LEFT JOIN matches m ON tb.id = m.bracket_id
              WHERE tb.event_id = ?
-             GROUP BY tb.id
              ORDER BY tb.sport_type`,
             [eventId]
         );
 
-        // Get detailed bracket information
+        // Get match counts for each bracket separately
         const bracketsWithDetails = await Promise.all(
             brackets.map(async (bracket) => {
+                // Get match statistics for this bracket
+                const [matchStats] = await db.execute(
+                    `SELECT 
+                        COUNT(*) as total_matches,
+                        SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as completed_matches
+                     FROM matches 
+                     WHERE bracket_id = ?`,
+                    [bracket.id]
+                );
+
                 // Get all matches for this bracket
                 const [matches] = await db.execute(
                     `SELECT m.*, t1.teamName as team1_name, t2.teamName as team2_name, 
@@ -1398,12 +1404,16 @@ exports.getEventResults = async (req, res) => {
                     if (match.team2_id) totalTeams.add(match.team2_id);
                 });
 
+                const stats = matchStats[0] || { total_matches: 0, completed_matches: 0 };
+
                 return {
                     ...bracket,
                     matches: matches,
                     totalTeams: totalTeams.size,
-                    completionRate: bracket.total_matches > 0 ? 
-                        Math.round((bracket.completed_matches / bracket.total_matches) * 100) : 0
+                    total_matches: stats.total_matches,
+                    completed_matches: stats.completed_matches,
+                    completionRate: stats.total_matches > 0 ? 
+                        Math.round((stats.completed_matches / stats.total_matches) * 100) : 0
                 };
             })
         );
@@ -1473,6 +1483,7 @@ exports.exportEventResults = async (req, res) => {
         res.redirect('/admin/event-history');
     }
 };
+
 
 
 
