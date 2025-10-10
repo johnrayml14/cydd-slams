@@ -853,24 +853,34 @@ async function loadSports(eventId) {
     }
 }
 
-        // Check if brackets already exist for this sport
+        // Check if brackets already exist for this sport - FIXED VERSION
         async function checkExistingBrackets(eventId, sportType, sportName) {
             try {
+                console.log(`Checking existing brackets for event ${eventId}, sport: ${sportName}`);
                 const response = await fetch(`/admin/schedule/event/${eventId}/brackets`);
                 const data = await response.json();
                 
-                existingBrackets = data.brackets.filter(bracket => 
-                    bracket.sport_type.toLowerCase() === sportName.toLowerCase()
-                );
+                console.log('All brackets data:', data.brackets);
+                
+                // Filter brackets by sport name - FIXED COMPARISON
+                existingBrackets = data.brackets.filter(bracket => {
+                    const matches = bracket.sport_type && bracket.sport_type.toLowerCase() === sportName.toLowerCase();
+                    console.log(`Comparing: "${bracket.sport_type}" with "${sportName}" -> ${matches}`);
+                    return matches;
+                });
+                
+                console.log('Filtered existing brackets:', existingBrackets);
                 
                 if (existingBrackets.length > 0) {
                     showExistingBrackets(eventId, sportType, sportName);
                 } else {
+                    console.log('No existing brackets found, loading teams...');
                     loadTeams(eventId, sportType, sportName);
                 }
             } catch (error) {
                 console.error('Error checking existing brackets:', error);
                 // If there's an error, proceed to load teams
+                console.log('Error occurred, loading teams as fallback...');
                 loadTeams(eventId, sportType, sportName);
             }
         }
@@ -912,16 +922,19 @@ async function loadSports(eventId) {
             document.getElementById('backToBrackets').style.display = 'block';
         }
 
-        // Load teams for selected event and sport
+        // Load teams for selected event and sport - FIXED VERSION
         async function loadTeams(eventId, sportType, sportName) {
             try {
+                console.log(`Loading teams for event ${eventId}, sport type: ${sportType}`);
                 const response = await fetch(`/admin/schedule/event/${eventId}/sport/${sportType}/teams`);
                 const data = await response.json();
+                
+                console.log('Teams data received:', data);
                 
                 const teamsGrid = document.getElementById('teamsGrid');
                 teamsGrid.innerHTML = '';
                 
-                if (data.teams.length === 0) {
+                if (!data.teams || data.teams.length === 0) {
                     teamsGrid.innerHTML = '<p>No teams registered for this sport.</p>';
                     return;
                 }
@@ -965,7 +978,7 @@ async function loadSports(eventId) {
                 document.getElementById('sportsSection').style.display = 'none';
             } catch (error) {
                 console.error('Error loading teams:', error);
-                alert('Error loading teams');
+                alert('Error loading teams: ' + error.message);
             }
         }
 
@@ -984,6 +997,10 @@ async function loadSports(eventId) {
             
             document.getElementById('bracketSection').style.display = 'block';
             document.getElementById('teamsSection').style.display = 'none';
+            
+            // Reset bracket selection
+            document.querySelectorAll('.bracket-option').forEach(o => o.classList.remove('selected'));
+            selectedBracketType = null;
         });
 
         // Bracket type selection
@@ -992,6 +1009,7 @@ async function loadSports(eventId) {
                 document.querySelectorAll('.bracket-option').forEach(o => o.classList.remove('selected'));
                 this.classList.add('selected');
                 selectedBracketType = this.dataset.bracketType;
+                console.log('Selected bracket type:', selectedBracketType);
             });
         });
 
@@ -1009,6 +1027,14 @@ async function loadSports(eventId) {
 
             try {
                 const teamIds = selectedTeams.map(team => team.id);
+                
+                console.log('Creating bracket with data:', {
+                    eventId: selectedEvent.id,
+                    sportType: selectedSport.type,
+                    sportName: selectedSport.name,
+                    bracketType: selectedBracketType,
+                    teams: teamIds
+                });
                 
                 const response = await fetch('/admin/schedule/create-bracket', {
                     method: 'POST',
@@ -1035,7 +1061,7 @@ async function loadSports(eventId) {
                 }
             } catch (error) {
                 console.error('Error creating bracket:', error);
-                alert('Error creating bracket');
+                alert('Error creating bracket: ' + error.message);
             }
         });
 
