@@ -18,9 +18,11 @@
     -ms-user-select: none;
 }
 
-.sport-card * {
-    pointer-events: none; /* This ensures clicks go through to the card, not its children */
-}
+/* REMOVED the problematic rule that was preventing clicks */
+/* .sport-card * {
+    pointer-events: none;
+} */
+
 .schedule-container {
     padding: 20px;
     max-width: 1200px;
@@ -817,24 +819,19 @@ async function loadSports(eventId) {
             sportCard.dataset.sportType = sport.type;
             sportCard.dataset.sportName = sport.name;
             
-            sportsGrid.appendChild(sportCard);
-        });
-        
-        // Use event delegation for better reliability
-        sportsGrid.addEventListener('click', function(e) {
-            const sportCard = e.target.closest('.sport-card');
-            if (sportCard && sportCard.parentNode === sportsGrid) {
-                console.log('Sport card clicked:', sportCard.dataset);
+            // ADDED direct event listener to each sport card
+            sportCard.addEventListener('click', function() {
+                console.log('Sport card clicked:', this.dataset);
                 
                 // Remove selection from all cards
                 document.querySelectorAll('.sport-card').forEach(c => c.classList.remove('selected'));
                 
                 // Add selection to clicked card
-                sportCard.classList.add('selected');
+                this.classList.add('selected');
                 
                 selectedSport = {
-                    type: sportCard.dataset.sportType,
-                    name: sportCard.dataset.sportName
+                    type: this.dataset.sportType,
+                    name: this.dataset.sportName
                 };
                 
                 console.log('Selected sport:', selectedSport);
@@ -842,7 +839,9 @@ async function loadSports(eventId) {
                 
                 // Proceed to next step
                 checkExistingBrackets(selectedEvent.id, selectedSport.type, selectedSport.name);
-            }
+            });
+            
+            sportsGrid.appendChild(sportCard);
         });
         
         document.getElementById('sportsSection').style.display = 'block';
@@ -1486,4 +1485,3 @@ async function loadSports(eventId) {
 </body>
 
 </html>
-
