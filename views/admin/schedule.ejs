@@ -8,6 +8,19 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap" rel="stylesheet">
 <style>
+
+/* Add this to your CSS */
+.sport-card {
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+.sport-card * {
+    pointer-events: none; /* This ensures clicks go through to the card, not its children */
+}
 .schedule-container {
     padding: 20px;
     max-width: 1200px;
@@ -1446,4 +1459,5 @@
         });
     </script>
 </body>
+
 </html>
