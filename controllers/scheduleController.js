@@ -35,7 +35,7 @@ exports.getSchedulePage = async (req, res) => {
     }
 };
 
-// Get sports for a specific event
+// Get sports for a specific event - FIXED VERSION
 exports.getEventSports = async (req, res) => {
     try {
         const eventId = req.params.eventId;
@@ -52,12 +52,15 @@ exports.getEventSports = async (req, res) => {
         const eventData = event[0];
         const sports = [];
         
-        // Parse the actual sports from the event data
-        if (eventData.sports && eventData.sports !== 'none') {
-            // Split the sports string by comma and add each sport
+        console.log('Event data:', eventData); // Debug log
+        
+        // Parse the actual sports from the event data - IMPROVED PARSING
+        if (eventData.sports && eventData.sports !== 'none' && eventData.sports !== '') {
             const sportsList = eventData.sports.split(',').map(sport => sport.trim());
+            console.log('Sports list:', sportsList); // Debug log
+            
             sportsList.forEach(sport => {
-                if (sport && sport !== 'none') {
+                if (sport && sport !== 'none' && sport !== '') {
                     sports.push({
                         type: 'sports',
                         name: sport
@@ -66,11 +69,12 @@ exports.getEventSports = async (req, res) => {
             });
         }
         
-        if (eventData.esports && eventData.esports !== 'none') {
-            // Split the esports string by comma and add each esport
+        if (eventData.esports && eventData.esports !== 'none' && eventData.esports !== '') {
             const esportsList = eventData.esports.split(',').map(esport => esport.trim());
+            console.log('Esports list:', esportsList); // Debug log
+            
             esportsList.forEach(esport => {
-                if (esport && esport !== 'none') {
+                if (esport && esport !== 'none' && esport !== '') {
                     sports.push({
                         type: 'esports',
                         name: esport
@@ -79,11 +83,12 @@ exports.getEventSports = async (req, res) => {
             });
         }
         
-        if (eventData.other_activities && eventData.other_activities !== 'none') {
-            // Split the other_activities string by comma and add each activity
+        if (eventData.other_activities && eventData.other_activities !== 'none' && eventData.other_activities !== '') {
             const activitiesList = eventData.other_activities.split(',').map(activity => activity.trim());
+            console.log('Other activities list:', activitiesList); // Debug log
+            
             activitiesList.forEach(activity => {
-                if (activity && activity !== 'none') {
+                if (activity && activity !== 'none' && activity !== '') {
                     sports.push({
                         type: 'other_activities',
                         name: activity
@@ -92,6 +97,7 @@ exports.getEventSports = async (req, res) => {
             });
         }
 
+        console.log('Final sports array:', sports); // Debug log
         res.json({ sports });
     } catch (error) {
         console.error('Error getting event sports:', error);
@@ -646,4 +652,5 @@ exports.setChampionManually = async (req, res) => {
     } finally {
         connection.release();
     }
+
 };
