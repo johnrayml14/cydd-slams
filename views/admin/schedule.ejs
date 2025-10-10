@@ -784,50 +784,75 @@
             });
         });
 
-        // Load sports for selected event
-        async function loadSports(eventId) {
-            try {
-                const response = await fetch(`/admin/schedule/event/${eventId}/sports`);
-                const data = await response.json();
-                
-                const sportsGrid = document.getElementById('sportsGrid');
-                sportsGrid.innerHTML = '';
-                
-                if (data.sports.length === 0) {
-                    sportsGrid.innerHTML = '<p>No sports available for this event.</p>';
-                    return;
-                }
-                
-                data.sports.forEach(sport => {
-                    const sportCard = document.createElement('div');
-                    sportCard.className = 'sport-card';
-                    sportCard.innerHTML = `
-                        <h5>${sport.name}</h5>
-                        <small>${sport.type.charAt(0).toUpperCase() + sport.type.slice(1).replace('_', ' ')}</small>
-                    `;
-                    sportCard.dataset.sportType = sport.type;
-                    sportCard.dataset.sportName = sport.name;
-                    
-                    sportCard.addEventListener('click', function() {
-                        document.querySelectorAll('.sport-card').forEach(c => c.classList.remove('selected'));
-                        this.classList.add('selected');
-                        selectedSport = {
-                            type: this.dataset.sportType,
-                            name: this.dataset.sportName
-                        };
-                        checkExistingBrackets(eventId, sport.type, sport.name);
-                    });
-                    
-                    sportsGrid.appendChild(sportCard);
-                });
-                
-                document.getElementById('sportsSection').style.display = 'block';
-                document.getElementById('eventsSection').style.display = 'none';
-            } catch (error) {
-                console.error('Error loading sports:', error);
-                alert('Error loading sports');
-            }
+        // Load sports for selected event - FIXED VERSION
+async function loadSports(eventId) {
+    try {
+        console.log('Loading sports for event ID:', eventId);
+        const response = await fetch(`/admin/schedule/event/${eventId}/sports`);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
+        
+        const data = await response.json();
+        
+        console.log('Sports data received:', data);
+        
+        const sportsGrid = document.getElementById('sportsGrid');
+        sportsGrid.innerHTML = '';
+        
+        if (!data.sports || data.sports.length === 0) {
+            sportsGrid.innerHTML = '<p>No sports available for this event.</p>';
+            return;
+        }
+        
+        data.sports.forEach(sport => {
+            console.log('Processing sport:', sport);
+            const sportCard = document.createElement('div');
+            sportCard.className = 'sport-card';
+            sportCard.innerHTML = `
+                <h5>${sport.name}</h5>
+                <small>${sport.type.charAt(0).toUpperCase() + sport.type.slice(1).replace('_', ' ')}</small>
+            `;
+            sportCard.dataset.sportType = sport.type;
+            sportCard.dataset.sportName = sport.name;
+            
+            sportsGrid.appendChild(sportCard);
+        });
+        
+        // Use event delegation for better reliability
+        sportsGrid.addEventListener('click', function(e) {
+            const sportCard = e.target.closest('.sport-card');
+            if (sportCard && sportCard.parentNode === sportsGrid) {
+                console.log('Sport card clicked:', sportCard.dataset);
+                
+                // Remove selection from all cards
+                document.querySelectorAll('.sport-card').forEach(c => c.classList.remove('selected'));
+                
+                // Add selection to clicked card
+                sportCard.classList.add('selected');
+                
+                selectedSport = {
+                    type: sportCard.dataset.sportType,
+                    name: sportCard.dataset.sportName
+                };
+                
+                console.log('Selected sport:', selectedSport);
+                console.log('Current event:', selectedEvent);
+                
+                // Proceed to next step
+                checkExistingBrackets(selectedEvent.id, selectedSport.type, selectedSport.name);
+            }
+        });
+        
+        document.getElementById('sportsSection').style.display = 'block';
+        document.getElementById('eventsSection').style.display = 'none';
+        
+    } catch (error) {
+        console.error('Error loading sports:', error);
+        alert('Error loading sports: ' + error.message);
+    }
+}
 
         // Check if brackets already exist for this sport
         async function checkExistingBrackets(eventId, sportType, sportName) {
@@ -1461,3 +1486,4 @@
 </body>
 
 </html>
+
